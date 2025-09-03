@@ -11,7 +11,7 @@
     <key>CFBundleGetInfoString</key>
 	<string>$(PRODUCT_NAME) 2025 DiCode77</string>
     <key>CFBundleIconFile</key>
-	<string>wxmac.icns</string>
+	<string>TriLogic.icns</string>
     <key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -47,7 +47,7 @@
 	<key>DTXcodeBuild</key>
 	<string>17A5305k</string>
 	<key>LSMinimumSystemVersion</key>
-	<string>11.5</string>
+	<string>15.0</string>
     <key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSPrincipalClass</key>

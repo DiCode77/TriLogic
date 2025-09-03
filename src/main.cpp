@@ -1,13 +1,16 @@
-#include <iostream>
-#include <wx/wx.h>
+//
+//  main.cpp
+//  TriLogic
+//
+//  Created by DiCode77.
+//
 
-class MyApp : public wxApp{
-public:
-    bool OnInit() override{
-        wxFrame *frame = new wxFrame(NULL, wxID_ANY, "Window", wxDefaultPosition, wxSize(700, 800));
-        frame->Show(true);
-        return true;
-    }
-};
+#include "main.hpp"
+
+bool MyApp::OnInit() {
+    TriLogic *prog = new TriLogic(wxT("TriLogic Game"), wxDefaultPosition, wxSize(400, 500));
+    prog->Show(true);
+    return true;
+}
 
 wxIMPLEMENT_APP(MyApp);
