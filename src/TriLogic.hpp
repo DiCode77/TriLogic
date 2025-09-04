@@ -10,10 +10,21 @@
 
 #include <iostream>
 #include <wx/wx.h>
+#include <wx/filename.h>
+#include <wx/stdpaths.h>
 
 class TriLogic : public wxFrame{
 public:
     TriLogic(const wxString title, const wxPoint point, const wxSize size);
+private:
+    wxButton *button_1vs1;
+    wxButton *button_usVsus;
+    wxButton *button_usVsai;
+    wxBitmapButton *bbitmap_settings;
+    wxBitmap *bitmap_iconSettings;
+    
+private:
+    wxString GetFoolDirPatch(const char*, const char*, const char*);
 };
 
 #endif /* TriLogic_hpp */
