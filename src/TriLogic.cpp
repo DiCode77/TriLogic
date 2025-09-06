@@ -8,6 +8,7 @@
 #include "TriLogic.hpp"
 
 TriLogic::TriLogic(const wxString title, const wxPoint point, const wxSize size) : wxFrame(nullptr, wxID_ANY, title, point, size, wxCLOSE_BOX | wxMINIMIZE_BOX){
+    this->Centre();
     this->panel = new wxPanel(this, wxID_ANY);
     wxImage::AddHandler(new wxPNGHandler);
     
@@ -47,6 +48,7 @@ void TriLogic::ShowMatchField(wxCommandEvent &ev){
     if (this->frameMFd == nullptr){
         this->frameMFd = new wxFrame(this->panel, wxID_ANY, wxString(" Start Games! ").append(((wxButton*)(ev.GetEventObject()))->GetLabel()), wxDefaultPosition, wxSize(600, 700), wxCLOSE_BOX | wxMINIMIZE_BOX);
         this->frameMFd->Bind(wxEVT_CLOSE_WINDOW, &TriLogic::DestroyFrame, this);
+        this->frameMFd->Centre();
         this->frameMFd->Show();
         this->frameMFd->SetBackgroundColour(wxColour(0, 0, 0, 150));
         this->Hide();
