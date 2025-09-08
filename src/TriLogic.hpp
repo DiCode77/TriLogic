@@ -14,6 +14,8 @@
 #include <wx/stdpaths.h>
 #include <wx/bitmap.h>
 
+#include "GridDynamic.hpp"
+
 class TriLogic : public wxFrame{
 public:
     TriLogic(const wxString title, const wxPoint point, const wxSize size);
