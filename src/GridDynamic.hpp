@@ -13,10 +13,9 @@
 
 class GridDynamic : public wxPanel{
     int line_grid;
-    wxSize client_size;
     
 public:
-    GridDynamic(wxWindow *th_w, int line = 0) : wxPanel(th_w), line_grid(line), client_size(th_w->GetClientSize()){
+    GridDynamic(wxWindow *th_w, int line = 0) : wxPanel(th_w), line_grid(line){
         SetBackgroundStyle(wxBG_STYLE_PAINT);
         Bind(wxEVT_PAINT, &GridDynamic::DrawingGrid, this);
         
@@ -38,7 +37,7 @@ public:
             return;
         }
         else{
-            const wxSize size   = /*this->GetClientSize();*/ this->client_size;
+            const wxSize size   =  this->GetClientSize();
             const double width  = size.GetWidth();
             const double height = size.GetHeight();
             
