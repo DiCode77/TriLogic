@@ -17,6 +17,7 @@
 #include "GridDynamic.hpp"
 
 class TriLogic : public wxFrame{
+    wxSize grid_cell_size;
 public:
     TriLogic(const wxString title, const wxPoint point, const wxSize size);
 private:
@@ -40,6 +41,9 @@ private:
     void ExitAllWindow(wxCommandEvent&);
     
     void SelectedBlock(wxCommandEvent&);
+    
+    void SetGridCellSize(wxSize);
+    const wxSize &GetGridCellSize() const;
 };
 
 #endif /* TriLogic_hpp */

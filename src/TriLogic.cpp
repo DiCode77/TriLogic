@@ -46,25 +46,16 @@ wxString TriLogic::GetFoolDirPatch(const char *folder, const char *name, const c
 
 void TriLogic::ShowMatchField(wxCommandEvent &ev){
     if (this->frameMFd == nullptr){
-        this->frameMFd = new wxFrame(this->panel, wxID_ANY, wxString(" Start Games! ").append(((wxButton*)(ev.GetEventObject()))->GetLabel()), wxDefaultPosition, wxSize(600, 700), wxCLOSE_BOX | wxMINIMIZE_BOX);
+        this->frameMFd = new wxFrame(this->panel, wxID_ANY, wxString(" Start Games! ").append(((wxButton*)(ev.GetEventObject()))->GetLabel()), wxDefaultPosition, wxSize(700, 700),
+                                                                                                                                                                  wxCLOSE_BOX | wxMINIMIZE_BOX);
         this->frameMFd->Bind(wxEVT_CLOSE_WINDOW, &TriLogic::DestroyFrame, this);
+        GridDynamic *grid = new GridDynamic(this->frameMFd, 8);
+        grid->DrawingGridDef(this->frameMFd->GetClientSize());
+        
         this->frameMFd->Centre();
-        this->frameMFd->Show();
+        this->frameMFd->Show(true);
        // this->frameMFd->SetBackgroundColour(wxColour(0, 0, 0, 150));
         this->Hide();
-        
-//        wxBitmap *bitmap_grate = new wxBitmap(GetFoolDirPatch("resources", "grad1_grade", "png"), wxBITMAP_TYPE_PNG);
-//        wxBitmapBase::Rescale(*bitmap_grate, wxSize(512, 512));
-        
-//        wxPoint pos = {
-//            (this->frameMFd->GetSize().x - bitmap_grate->GetSize().x) /2,
-//            (this->frameMFd->GetSize().y - bitmap_grate->GetSize().y) /2 -50
-//        };
-//        
-//        wxStaticBitmap *sbitmap_grate = new wxStaticBitmap(this->frameMFd, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize);
-//        sbitmap_grate->SetBitmap(*bitmap_grate);
-//        sbitmap_grate->SetPosition(pos);
-        
         
         wxImage img_return(GetFoolDirPatch("resources", "Return2", "png"), wxBITMAP_TYPE_PNG);
         img_return = img_return.Scale(50, 50);
@@ -92,40 +83,24 @@ void TriLogic::ShowMatchField(wxCommandEvent &ev){
         sbitmap_exit->SetBitmap(img_exit);
         sbitmap_exit->SetPosition(wxPoint(((this->frameMFd->GetSize().x) - img_exit.GetSize().x -10), sbitmap_turn->GetPosition().y +3));
         
+        if (grid->GetDataMap().count(0))
+            SetGridCellSize(wxSize(grid->GetDataMap().at(0).at(0).dx, grid->GetDataMap().at(0).at(0).dy));
         
         
-//        wxBitmapButton *sel_cont_1 = new wxBitmapButton(this->frameMFd, wxID_ANY, wxNullBitmap,
-//                                                        wxPoint(110, 110), wxSize(110, 110), wxBORDER_NONE);
-//        sel_cont_1->Bind(wxEVT_BUTTON, &TriLogic::SelectedBlock, this);
-//        wxBitmapButton *sel_cont_2 = new wxBitmapButton(this->frameMFd, wxID_ANY, wxNullBitmap,
-//                                                        wxPoint(sel_cont_1->GetPosition().x + sel_cont_1->GetSize().x +25, 110), wxSize(110, 110), wxBORDER_NONE);
-//        sel_cont_2->Bind(wxEVT_BUTTON, &TriLogic::SelectedBlock, this);
-//        wxBitmapButton *sel_cont_3 = new wxBitmapButton(this->frameMFd, wxID_ANY, wxNullBitmap,
-//                                                        wxPoint(sel_cont_2->GetPosition().x + sel_cont_2->GetSize().x +25, 110), wxSize(110, 110), wxBORDER_NONE);
-//        sel_cont_3->Bind(wxEVT_BUTTON, &TriLogic::SelectedBlock, this);
-//        
-//        wxBitmapButton *sel_cont_4 = new wxBitmapButton(this->frameMFd, wxID_ANY, wxNullBitmap,
-//                                                        wxPoint(sel_cont_1->GetPosition().x, sel_cont_1->GetPosition().y + sel_cont_1->GetSize().y +25), wxSize(110, 110), wxBORDER_NONE);
-//        sel_cont_4->Bind(wxEVT_BUTTON, &TriLogic::SelectedBlock, this);
-//        wxBitmapButton *sel_cont_5 = new wxBitmapButton(this->frameMFd, wxID_ANY, wxNullBitmap,
-//                                                        wxPoint(sel_cont_4->GetPosition().x + sel_cont_4->GetSize().x +25, sel_cont_1->GetPosition().y + sel_cont_1->GetSize().y +25), wxSize(110, 110), wxBORDER_NONE);
-//        sel_cont_5->Bind(wxEVT_BUTTON, &TriLogic::SelectedBlock, this);
-//        wxBitmapButton *sel_cont_6 = new wxBitmapButton(this->frameMFd, wxID_ANY, wxNullBitmap,
-//                                                        wxPoint(sel_cont_5->GetPosition().x + sel_cont_5->GetSize().x +25, sel_cont_1->GetPosition().y + sel_cont_1->GetSize().y +25), wxSize(110, 110), wxBORDER_NONE);
-//        sel_cont_6->Bind(wxEVT_BUTTON, &TriLogic::SelectedBlock, this);
-//        
-//        wxBitmapButton *sel_cont_7 = new wxBitmapButton(this->frameMFd, wxID_ANY, wxNullBitmap,
-//                                                        wxPoint(sel_cont_4->GetPosition().x, sel_cont_4->GetPosition().y + sel_cont_4->GetSize().y +25), wxSize(110, 110), wxBORDER_NONE);
-//        sel_cont_7->Bind(wxEVT_BUTTON, &TriLogic::SelectedBlock, this);
-//        wxBitmapButton *sel_cont_8 = new wxBitmapButton(this->frameMFd, wxID_ANY, wxNullBitmap,
-//                                                        wxPoint(sel_cont_7->GetPosition().x + sel_cont_7->GetSize().x +25, sel_cont_5->GetPosition().y + sel_cont_5->GetSize().y +25), wxSize(110, 110), wxBORDER_NONE);
-//        sel_cont_8->Bind(wxEVT_BUTTON, &TriLogic::SelectedBlock, this);
-//        wxBitmapButton *sel_cont_9 = new wxBitmapButton(this->frameMFd, wxID_ANY, wxNullBitmap,
-//                                                        wxPoint(sel_cont_8->GetPosition().x + sel_cont_8->GetSize().x +25, sel_cont_6->GetPosition().y + sel_cont_6->GetSize().y +25), wxSize(110, 110), wxBORDER_NONE);
-//        sel_cont_9->Bind(wxEVT_BUTTON, &TriLogic::SelectedBlock, this);
+        std::vector<std::vector<wxBitmapButton*>> vec(grid->GetDataMap().size());
         
-        GridDynamic *grid = new GridDynamic(this->frameMFd, 6);
-        delete grid;
+        for (int i = 0; i < vec.size(); i++){
+            vec[i].resize(grid->GetDataMap().size());
+        }
+
+        for (int i = 0; i < vec.size(); i++){
+            int code = i;
+            
+            for (int j = 0; j < vec[i].size(); j++){
+                vec[i][j] = new wxBitmapButton(this->frameMFd, wxID_ANY, wxNullBitmap, wxPoint(grid->GetDataMap().at(code).at(j).x, grid->GetDataMap().at(code).at(j).y), wxSize(grid->GetDataMap().at(code).at(j).dx, grid->GetDataMap().at(code).at(j).dy), wxBORDER_NONE);
+                vec[i][j]->Bind(wxEVT_BUTTON, &TriLogic::SelectedBlock, this);
+            }
+        }
     }
 }
 
@@ -160,10 +135,18 @@ void TriLogic::SelectedBlock(wxCommandEvent &ev){
     
     if (!button->GetBitmap().IsOk()){
         wxImage img(GetFoolDirPatch("resources", ch[revert], "png"), wxBITMAP_TYPE_PNG);
-        img = img.Scale(100, 100);
+        img = img.Scale(GetGridCellSize());
         
         button->SetBitmap(img);
         
         revert = !revert;
     }
+}
+
+void TriLogic::SetGridCellSize(wxSize size){
+    this->grid_cell_size = size;
+}
+
+const wxSize &TriLogic::GetGridCellSize() const{
+    return this->grid_cell_size;
 }
