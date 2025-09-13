@@ -10,7 +10,7 @@
 
 #include <wx/wx.h>
 #include <wx/dcbuffer.h>
-
+#include <functional>
 
 typedef struct elem_posit{
     const double x;
@@ -20,6 +20,8 @@ typedef struct elem_posit{
 } elem_posit;
 
 class GridDynamic : public wxPanel{
+    std::function<void()> myFunc;
+    
     int line_grid;
     std::unordered_map<int, std::vector<elem_posit>> un_map;
 public:
@@ -32,6 +34,9 @@ public:
     
 private:
     void DrawingGrid(wxPaintEvent&);
+    
+public:
+    void SetFuncUpdate(std::function<void()> func);
 };
 
 #endif /* GridDynamic_hpp */

@@ -7,7 +7,7 @@
 
 #include "GridDynamic.hpp"
 
-GridDynamic::GridDynamic(wxWindow *th_w, int line = 0) : wxPanel(th_w), line_grid(line){
+GridDynamic::GridDynamic(wxWindow *th_w, int line = 0) : wxPanel(th_w), line_grid(line), myFunc(nullptr){
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     Bind(wxEVT_PAINT, &GridDynamic::DrawingGrid, this);
 }
@@ -27,7 +27,7 @@ void GridDynamic::DrawingGridDef(wxSize mySize){
         return;
     }
     else{
-        const wxSize size   =  ((mySize == wxSize(0, 0)) ? this->GetClientSize() : mySize);
+        const wxSize size   =  /*((mySize == wxSize(0, 0)) ? this->GetClientSize() : mySize);*/ this->GetParent()->GetClientSize();
         const double width  = size.GetWidth();
         const double height = size.GetHeight();
         
@@ -64,6 +64,7 @@ void GridDynamic::DrawingGridDef(wxSize mySize){
 
         const double thick_drop = thick / 2;
         
+        this->un_map.clear();
         for (int i = 0; i < this->line_grid; i++){
             this->un_map.insert({i, {}});
             
@@ -74,6 +75,9 @@ void GridDynamic::DrawingGridDef(wxSize mySize){
                     this->un_map[i].push_back({x + thick_drop, y + thick_drop, dx - thick, dy - thick});
             }
         }
+        
+        if (this->myFunc != nullptr)
+            this->myFunc();
         
         delete gc;
     }
@@ -87,4 +91,8 @@ const std::unordered_map<int, std::vector<elem_posit>> &GridDynamic::GetDataMap(
 
 void GridDynamic::DrawingGrid(wxPaintEvent&){
     DrawingGridDef();
+}
+
+void GridDynamic::SetFuncUpdate(std::function<void()> func){
+    this->myFunc = func;
 }

@@ -17,7 +17,12 @@
 #include "GridDynamic.hpp"
 
 class TriLogic : public wxFrame{
+    GridDynamic *grid;
+    std::vector<std::vector<wxBitmapButton*>> vec_grid;
+    std::vector<wxBitmapButton*> vecbit_on;
     wxSize grid_cell_size;
+    short whoseMove = 0;
+    
 public:
     TriLogic(const wxString title, const wxPoint point, const wxSize size);
 private:
@@ -35,6 +40,7 @@ private:
     
 private:
     void ShowMatchField(wxCommandEvent&);
+    void UpdateMatchSizeWindow();
     void DestroyFrame(wxCloseEvent&);
     void ReturnToMainWindow(wxCommandEvent&);
     void ReturnGameToStart(wxCommandEvent&);
