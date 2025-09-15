@@ -16,12 +16,20 @@
 
 #include "GridDynamic.hpp"
 
+enum ID_START_BUTTON{
+    NONE,
+    ID_1VS1,
+    ID_1VSBOT,
+    ID_1VSAI
+};
+
 class TriLogic : public wxFrame{
     GridDynamic *grid;
     std::vector<std::vector<wxBitmapButton*>> vec_grid;
     std::vector<wxBitmapButton*> vecbit_on;
     wxSize grid_cell_size;
     short whoseMove = 0;
+    ID_START_BUTTON ID_SELECT_BT_SG;
     
 public:
     TriLogic(const wxString title, const wxPoint point, const wxSize size);
@@ -46,10 +54,13 @@ private:
     void ReturnGameToStart(wxCommandEvent&);
     void ExitAllWindow(wxCommandEvent&);
     
+    void GameModeStart(wxCommandEvent&);
     void SelectedBlock(wxCommandEvent&);
     
     void SetGridCellSize(wxSize);
     const wxSize &GetGridCellSize() const;
+    void SetSelectIdButton(int);
+    ID_START_BUTTON GetSelectIdButton();
 };
 
 #endif /* TriLogic_hpp */

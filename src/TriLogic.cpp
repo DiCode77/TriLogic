@@ -12,9 +12,9 @@ TriLogic::TriLogic(const wxString title, const wxPoint point, const wxSize size)
     this->panel = new wxPanel(this, wxID_ANY);
     wxImage::AddHandler(new wxPNGHandler);
     
-    this->button_1vs1         = new wxButton(this->panel, wxID_ANY, wxT("1 Vs 1"), wxDefaultPosition, wxDefaultSize);
-    this->button_usVsus       = new wxButton(this->panel, wxID_ANY, wxT("1 Vs Bot"), wxDefaultPosition, wxDefaultSize);
-    this->button_usVsai       = new wxButton(this->panel, wxID_ANY, wxT("1 Vs Ai"), wxDefaultPosition, wxDefaultSize);
+    this->button_1vs1         = new wxButton(this->panel, ID_START_BUTTON::ID_1VS1, wxT("1 Vs 1"), wxDefaultPosition, wxDefaultSize);
+    this->button_usVsus       = new wxButton(this->panel, ID_START_BUTTON::ID_1VSBOT, wxT("1 Vs Bot"), wxDefaultPosition, wxDefaultSize);
+    this->button_usVsai       = new wxButton(this->panel, ID_START_BUTTON::ID_1VSAI, wxT("1 Vs Ai"), wxDefaultPosition, wxDefaultSize);
     this->bbitmap_settings    = new wxBitmapButton(this->panel, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize(80, 80), wxBORDER_NONE);
     this->bitmap_iconSettings = new wxBitmap(GetFoolDirPatch("resources", "settings", "png"), wxBITMAP_TYPE_PNG);
     wxBitmapBase::Rescale(*this->bitmap_iconSettings, this->bbitmap_settings->GetSize());
@@ -92,14 +92,17 @@ void TriLogic::ShowMatchField(wxCommandEvent &ev){
             
             for (int j = 0; j < this->vec_grid[i].size(); j++){
                 this->vec_grid[i][j] = new wxBitmapButton(this->frameMFd, wxID_ANY, wxNullBitmap, wxPoint(grid->GetDataMap().at(code).at(j).x, grid->GetDataMap().at(code).at(j).y), wxSize(grid->GetDataMap().at(code).at(j).dx, grid->GetDataMap().at(code).at(j).dy), wxBORDER_NONE);
-                this->vec_grid[i][j]->Bind(wxEVT_BUTTON, &TriLogic::SelectedBlock, this);
+                this->vec_grid[i][j]->Bind(wxEVT_BUTTON, &TriLogic::GameModeStart, this);
             }
         }
+        SetSelectIdButton(ev.GetId());
     }
 }
 
+// Here we update the location of the elements and their size.
 void TriLogic::UpdateMatchSizeWindow(){
     if (!this->vec_grid.empty()){
+        // update the location of cell selection elements.
         for (int i = 0; i < this->vec_grid.size(); i++){
             for (int j = 0; j < this->vec_grid[i].size(); j++){
                 this->vec_grid[i][j]->SetPosition(wxPoint(grid->GetDataMap().at(i).at(j).x, grid->GetDataMap().at(i).at(j).y));
@@ -108,6 +111,7 @@ void TriLogic::UpdateMatchSizeWindow(){
         }
     }
     
+    // updating the location of navigation icons.
     if (!this->vecbit_on.empty()){
         for (int i = 0; i < this->vecbit_on.size(); i++){
             this->vecbit_on[i]->SetPosition(wxPoint(50 *i, this->frameMFd->GetSize().y -70));
@@ -147,6 +151,20 @@ void TriLogic::ExitAllWindow(wxCommandEvent&){
     this->Close();
 }
 
+void TriLogic::GameModeStart(wxCommandEvent &ev){
+    switch (GetSelectIdButton()){
+        case ID_START_BUTTON::ID_1VS1:
+            SelectedBlock(ev);
+            break;
+        case ID_START_BUTTON::ID_1VSBOT:
+            break;
+        case ID_START_BUTTON::ID_1VSAI:
+            break;
+        default:
+            break;
+    }
+}
+
 
 void TriLogic::SelectedBlock(wxCommandEvent &ev){
     wxBitmapButton *button = (wxBitmapButton*)ev.GetEventObject();
@@ -166,4 +184,25 @@ void TriLogic::SetGridCellSize(wxSize size){
 
 const wxSize &TriLogic::GetGridCellSize() const{
     return this->grid_cell_size;
+}
+
+void TriLogic::SetSelectIdButton(int id){
+    switch (id) {
+        case ID_START_BUTTON::ID_1VS1:
+            this->ID_SELECT_BT_SG = ID_START_BUTTON::ID_1VS1;
+            break;
+        case ID_START_BUTTON::ID_1VSBOT:
+            this->ID_SELECT_BT_SG = ID_START_BUTTON::ID_1VSBOT;
+            break;
+        case ID_START_BUTTON::ID_1VSAI:
+            this->ID_SELECT_BT_SG = ID_START_BUTTON::ID_1VSAI;
+            break;
+        default:
+            this->ID_SELECT_BT_SG = ID_START_BUTTON::NONE;
+            break;
+    }
+}
+
+ID_START_BUTTON TriLogic::GetSelectIdButton(){
+    return this->ID_SELECT_BT_SG;
 }
