@@ -24,6 +24,7 @@ class GridDynamic : public wxPanel{
     
     int line_grid;
     std::unordered_map<int, std::vector<elem_posit>> un_map;
+    wxColor color_grid;
 public:
     
     GridDynamic(wxWindow*, int);
@@ -34,9 +35,11 @@ public:
     
 private:
     void DrawingGrid(wxPaintEvent&);
+    wxColor GetColorGrid();
     
 public:
     void SetFuncUpdate(std::function<void()> func);
+    void SetColorIsGrid(wxColor);
 };
 
 #endif /* GridDynamic_hpp */

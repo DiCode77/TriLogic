@@ -131,6 +131,7 @@ void TriLogic::ReturnToMainWindow(wxCommandEvent&){
         this->frameMFd = nullptr;
         this->vec_grid.clear();
         this->vecbit_on.clear();
+        this->whoseMove = 0;
         this->Show();
     }
 }
