@@ -13,7 +13,7 @@ GridDynamic::GridDynamic(wxWindow *th_w, int line = 0) : wxPanel(th_w), line_gri
 }
 
 // I set the size of the grid n * n separately
-void GridDynamic::gridLines(int lines){
+void GridDynamic:: SetGridLines(int lines){
     this->line_grid = lines;
 }
 

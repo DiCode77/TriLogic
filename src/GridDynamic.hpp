@@ -29,7 +29,7 @@ public:
     
     GridDynamic(wxWindow*, int);
     
-    void gridLines(int);
+    void SetGridLines(int);
     void DrawingGridDef(wxSize mySize = wxSize(0, 0));
     const std::unordered_map<int, std::vector<elem_posit>> &GetDataMap() const;
     

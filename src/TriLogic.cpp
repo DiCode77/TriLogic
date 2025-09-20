@@ -33,6 +33,7 @@ TriLogic::TriLogic(const wxString title, const wxPoint point, const wxSize size)
     this->button_1vs1->Bind(wxEVT_BUTTON, &TriLogic::ShowMatchField, this);
     this->button_usVsus->Bind(wxEVT_BUTTON, &TriLogic::ShowMatchField, this);
     this->button_usVsai->Bind(wxEVT_BUTTON, &TriLogic::ShowMatchField, this);
+    this->bbitmap_settings->Bind(wxEVT_BUTTON, &TriLogic::SetSettingsForGames, this);
 }
 
 wxString TriLogic::GetFoolDirPatch(const char *folder, const char *name, const char *ext){
@@ -206,4 +207,57 @@ void TriLogic::SetSelectIdButton(int id){
 
 ID_START_BUTTON TriLogic::GetSelectIdButton(){
     return this->ID_SELECT_BT_SG;
+}
+
+
+void TriLogic::SetSettingsForGames(wxCommandEvent&){
+    wxFrame *frame = new wxFrame(this, wxID_ANY, wxT("Settings"), wxDefaultPosition, wxSize(600, 450));
+    
+    wxPropertyGrid* pg = new wxPropertyGrid(frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxPG_SPLITTER_AUTO_CENTER | wxPG_DEFAULT_STYLE);
+    pg->Bind(wxEVT_PG_CHANGED, &TriLogic::SetSettingsProperty, this);
+    
+    wxPGProperty *title_name = pg->Append(new wxPropertyCategory(this->GetTitle()));
+    
+    wxPGProperty *main_w = title_name->AppendChild(new wxPropertyCategory("Main Window"));
+    main_w->AppendChild(new MyColourProperty(this, "Color", "Main_color_window"));
+    
+    wxPGProperty *game_w = title_name->AppendChild(new wxPropertyCategory("Game Window"));
+    game_w->AppendChild(new MyColourProperty(this, "Color Grid", "Game_grid_color"));
+    game_w->AppendChild(new MyColourProperty(this, "Color Window", "Game_color_window"));
+
+    pg->CollapseAll();
+    title_name->SetExpanded(true);
+    main_w->SetExpanded(false);
+    game_w->SetExpanded(false);
+
+
+    frame->Show();
+}
+
+
+void TriLogic::SetSettingsProperty(wxPropertyGridEvent &event){
+    if (event.GetPropertyName() == "Main_color_window"){
+        MyColourProperty *mcp = dynamic_cast<MyColourProperty*>(event.GetProperty());
+        if (mcp){
+            this->SetBackgroundColour(mcp->GetColors());
+            this->Update();
+            this->Refresh();
+        }
+    }
+    else if (event.GetPropertyName() == "Game_grid_color"){
+        MyColourProperty *mcp = dynamic_cast<MyColourProperty*>(event.GetProperty());
+        if (mcp){
+            this->grid->SetColorIsGrid(mcp->GetColors());
+            this->grid->Update();
+            this->grid->Refresh();
+        }
+    }
+    else if (event.GetPropertyName() == "Game_color_window"){
+        MyColourProperty *mcp = dynamic_cast<MyColourProperty*>(event.GetProperty());
+        if (mcp && this->frameMFd != nullptr){
+            this->grid->SetBackgroundColour(wxColour(mcp->GetColors()));
+            this->grid->Update();
+            this->grid->Refresh();
+        }
+    }
 }

@@ -14,7 +14,11 @@
 #include <wx/stdpaths.h>
 #include <wx/bitmap.h>
 
+#include <wx/propgrid/propgrid.h>
+#include <wx/propgrid/advprops.h>
+
 #include "GridDynamic.hpp"
+#include "ColourPropertyGrid.hpp"
 
 enum ID_START_BUTTON{
     NONE,
@@ -61,6 +65,10 @@ private:
     const wxSize &GetGridCellSize() const;
     void SetSelectIdButton(int);
     ID_START_BUTTON GetSelectIdButton();
+    
+    void SetSettingsForGames(wxCommandEvent&);
+    void SetSettingsProperty(wxPropertyGridEvent&);
+    
 };
 
 #endif /* TriLogic_hpp */

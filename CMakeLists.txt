@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 4.0.2)
 
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake CACHE STRING "Vcpkg toolchain file")
-set(MINIMUM_APP_VERSION "15.0")
+set(MINIMUM_APP_VERSION "26.0")
 set(CMAKE_OSX_DEPLOYMENT_TARGET "${MINIMUM_APP_VERSION}" CACHE STRING "Minimum OS X deployment version")
 
 project(TriLogic)
@@ -31,6 +31,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20
                                                  
 set_source_files_properties(${IMAGE_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources") 
 
-target_link_libraries(${PROJECT_NAME} PRIVATE wx::core wx::base)
+target_link_libraries(${PROJECT_NAME} PRIVATE wx::core wx::base wx::propgrid)
 
 target_sources(${PROJECT_NAME} PRIVATE ${IMAGE_FILES})
