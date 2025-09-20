@@ -40,6 +40,7 @@ public:
 private:
     wxPanel *panel = nullptr;
     wxFrame *frameMFd = nullptr;
+    wxFrame *frame_settings = nullptr;
 private:
     wxButton *button_1vs1;
     wxButton *button_usVsus;
@@ -68,6 +69,8 @@ private:
     
     void SetSettingsForGames(wxCommandEvent&);
     void SetSettingsProperty(wxPropertyGridEvent&);
+    
+    void DestroyFrameSettings(wxCloseEvent&);
     
 };
 
