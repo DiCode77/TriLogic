@@ -53,6 +53,7 @@ private:
     
 private:
     void ShowMatchField(wxCommandEvent&);
+    void InitBitmapButtonGrid(std::vector<std::vector<wxBitmapButton*>> *grid, int, int);
     void UpdateMatchSizeWindow();
     void DestroyFrame(wxCloseEvent&);
     void ReturnToMainWindow(wxCommandEvent&);

@@ -62,8 +62,8 @@ void TriLogic::ShowMatchField(wxCommandEvent &ev){
         this->frameMFd->SetMinSize(this->frameMFd->GetSize() / 1.9);
         this->Hide();
     
-        if (grid->GetDataMap().count(0))
-            SetGridCellSize(wxSize(grid->GetDataMap().at(0).at(0).dx, grid->GetDataMap().at(0).at(0).dy));
+        if (this->grid->GetDataMap().count(0))
+            SetGridCellSize(wxSize(this->grid->GetDataMap().at(0).at(0).dx, this->grid->GetDataMap().at(0).at(0).dy));
         
         this->vecbit_on.resize(3);
         std::vector<void (TriLogic::*)(wxCommandEvent&)> vec_func{
@@ -83,31 +83,88 @@ void TriLogic::ShowMatchField(wxCommandEvent &ev){
             this->vecbit_on[i]->Bind(wxEVT_BUTTON, vec_func[i], this);
         }
         
-        this->vec_grid.resize(grid->GetDataMap().size());
-        for (int i = 0; i < this->vec_grid.size(); i++){
-            this->vec_grid[i].resize(grid->GetDataMap().size());
-        }
+        InitBitmapButtonGrid(&this->vec_grid, 0, static_cast<int>(this->grid->GetDataMap().size()));
+        SetSelectIdButton(ev.GetId());
+    }
+}
 
-        for (int i = 0; i < this->vec_grid.size(); i++){
-            int code = i;
+void TriLogic::InitBitmapButtonGrid(std::vector<std::vector<wxBitmapButton*>> *m_grid, int start, int end){
+    if (m_grid != nullptr && start != end){
+        
+        if (m_grid->size() < end){
+
+            m_grid->resize(end);
             
-            for (int j = 0; j < this->vec_grid[i].size(); j++){
-                this->vec_grid[i][j] = new wxBitmapButton(this->frameMFd, wxID_ANY, wxNullBitmap, wxPoint(grid->GetDataMap().at(code).at(j).x, grid->GetDataMap().at(code).at(j).y), wxSize(grid->GetDataMap().at(code).at(j).dx, grid->GetDataMap().at(code).at(j).dy), wxBORDER_NONE);
-                this->vec_grid[i][j]->Bind(wxEVT_BUTTON, &TriLogic::GameModeStart, this);
+            for (int i = 0; i < m_grid->size(); i++){
+                (*m_grid)[i].resize(end);
             }
         }
-        SetSelectIdButton(ev.GetId());
+        
+        if (start >= end){
+            if (start)
+            for (size_t i = 0; i < m_grid->size(); i++){
+                for (int j = 0; j < (*m_grid)[i].size(); j++){
+                    if (j < end){
+                        continue;
+                    }
+                    else{
+                        if (i >= end){
+                            break;
+                        }
+                        else{
+                            (*m_grid)[i][j]->SetBitmap(wxNullBitmap);
+                            (*m_grid)[i][j]->Destroy();
+                            (*m_grid)[i][j] = nullptr;
+                        }
+                    }
+                }
+                
+                if (i >= end){
+                    for (int l = 0; l < (*m_grid)[i].size(); l++){
+                        (*m_grid)[i][l]->SetBitmap(wxNullBitmap);
+                        (*m_grid)[i][l]->Destroy();
+                        (*m_grid)[i][l] = nullptr;
+                    }
+                }
+                
+                if (i < end){
+                    (*m_grid)[i].resize(end);
+                }
+            }
+            
+            m_grid->resize(end);
+            return;
+        }
+        
+        for (int i = 0; i < end; i++){
+            int code = i;
+            
+            for (int j = 0; j < end; j++){
+                if ((*m_grid)[i][j] != nullptr){
+                    (*m_grid)[i][j]->SetBitmap(wxNullBitmap);
+                    continue;
+                }
+                
+                wxBitmapButton *btn = new wxBitmapButton(this->frameMFd, wxID_ANY, wxNullBitmap,
+                                                         wxPoint(this->grid->GetDataMap().at(code).at(j).x, this->grid->GetDataMap().at(code).at(j).y),
+                                                         wxSize(this->grid->GetDataMap().at(code).at(j).dx, this->grid->GetDataMap().at(code).at(j).dy), wxBORDER_NONE);
+                btn->Bind(wxEVT_BUTTON, &TriLogic::GameModeStart, this);
+                
+                
+                (*m_grid)[i][j] = btn;
+            }
+        }
     }
 }
 
 // Here we update the location of the elements and their size.
 void TriLogic::UpdateMatchSizeWindow(){
     if (!this->vec_grid.empty()){
-        // update the location of cell selection elements.
+        InitBitmapButtonGrid(&this->vec_grid, static_cast<int>(this->vec_grid.size()), this->grid->GetGridLines());
         for (int i = 0; i < this->vec_grid.size(); i++){
             for (int j = 0; j < this->vec_grid[i].size(); j++){
-                this->vec_grid[i][j]->SetPosition(wxPoint(grid->GetDataMap().at(i).at(j).x, grid->GetDataMap().at(i).at(j).y));
-                this->vec_grid[i][j]->SetSize(wxSize(grid->GetDataMap().at(i).at(j).dx, grid->GetDataMap().at(i).at(j).dy));
+                this->vec_grid[i][j]->SetPosition(wxPoint(this->grid->GetDataMap().at(i).at(j).x, this->grid->GetDataMap().at(i).at(j).y));
+                this->vec_grid[i][j]->SetSize(wxSize(this->grid->GetDataMap().at(i).at(j).dx, this->grid->GetDataMap().at(i).at(j).dy));
             }
         }
     }
@@ -223,7 +280,16 @@ void TriLogic::SetSettingsForGames(wxCommandEvent&){
         wxPGProperty *main_w = title_name->AppendChild(new wxPropertyCategory("Main Window"));
         main_w->AppendChild(new MyColourProperty(this, "Color", "Main_color_window"));
         
+        wxArrayString arr_lab;
+        wxArrayInt arr_val;
+        
+        for (int i = 3; i <= 10; i++){
+            arr_lab.Add(std::to_string(i) + "x" + std::to_string(i));
+            arr_val.Add(i);
+        }
+        
         wxPGProperty *game_w = title_name->AppendChild(new wxPropertyCategory("Game Window"));
+        game_w->AppendChild(new wxEnumProperty("Mesh size", "Mesh_size_grid", arr_lab, arr_val, 1));
         game_w->AppendChild(new MyColourProperty(this, "Color Grid", "Game_grid_color"));
         game_w->AppendChild(new MyColourProperty(this, "Color Window", "Game_color_window"));
         
@@ -266,6 +332,14 @@ void TriLogic::SetSettingsProperty(wxPropertyGridEvent &event){
         MyColourProperty *mcp = dynamic_cast<MyColourProperty*>(event.GetProperty());
         if (mcp && this->frameMFd != nullptr){
             this->grid->SetBackgroundColour(wxColour(mcp->GetColors()));
+            this->grid->Update();
+            this->grid->Refresh();
+        }
+    }
+    else if (event.GetPropertyName() == "Mesh_size_grid"){
+        long val = event.GetValue().GetLong();
+        if (val >= 3){
+            this->grid->SetGridLines(static_cast<int>(val));
             this->grid->Update();
             this->grid->Refresh();
         }

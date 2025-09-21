@@ -13,8 +13,13 @@ GridDynamic::GridDynamic(wxWindow *th_w, int line = 0) : wxPanel(th_w), line_gri
 }
 
 // I set the size of the grid n * n separately
-void GridDynamic:: SetGridLines(int lines){
+void GridDynamic::SetGridLines(int lines){
     this->line_grid = lines;
+}
+
+// Get the number of cells n * n
+int GridDynamic::GetGridLines(){
+    return this->line_grid;
 }
 
 // The main method of constructing a grid and calculating the coordinates of each cell
