@@ -90,67 +90,61 @@ void TriLogic::ShowMatchField(wxCommandEvent &ev){
 
 void TriLogic::InitBitmapButtonGrid(std::vector<std::vector<wxBitmapButton*>> *m_grid, int start, int end){
     if (m_grid != nullptr && start != end){
+        wxCommandEvent ev_cell(wxEVT_BUTTON, NULL);
+        ReturnGameToStart(ev_cell);
         
         if (m_grid->size() < end){
-
             m_grid->resize(end);
             
             for (int i = 0; i < m_grid->size(); i++){
                 (*m_grid)[i].resize(end);
             }
         }
-        
-        if (start >= end){
-            if (start)
-            for (size_t i = 0; i < m_grid->size(); i++){
-                for (int j = 0; j < (*m_grid)[i].size(); j++){
-                    if (j < end){
-                        continue;
-                    }
-                    else{
-                        if (i >= end){
-                            break;
+        else{
+            if (start >= end){
+                for (size_t i = 0; i < m_grid->size() && start; i++){
+                    for (int j = 0; j < (*m_grid)[i].size(); j++){
+                        if (j < end){
+                            continue;
                         }
                         else{
-                            (*m_grid)[i][j]->SetBitmap(wxNullBitmap);
-                            (*m_grid)[i][j]->Destroy();
-                            (*m_grid)[i][j] = nullptr;
+                            if (i >= end){
+                                break;
+                            }
+                            else{
+                                (*m_grid)[i][j]->Destroy();
+                                (*m_grid)[i][j] = nullptr;
+                            }
                         }
                     }
-                }
-                
-                if (i >= end){
-                    for (int l = 0; l < (*m_grid)[i].size(); l++){
-                        (*m_grid)[i][l]->SetBitmap(wxNullBitmap);
-                        (*m_grid)[i][l]->Destroy();
-                        (*m_grid)[i][l] = nullptr;
+                    
+                    if (i >= end){
+                        for (int l = 0; l < (*m_grid)[i].size(); l++){
+                            (*m_grid)[i][l]->Destroy();
+                            (*m_grid)[i][l] = nullptr;
+                        }
+                    }
+                    
+                    if (i < end){
+                        (*m_grid)[i].resize(end);
                     }
                 }
                 
-                if (i < end){
-                    (*m_grid)[i].resize(end);
-                }
+                m_grid->resize(end);
+                return;
             }
-            
-            m_grid->resize(end);
-            return;
         }
         
         for (int i = 0; i < end; i++){
-            int code = i;
-            
             for (int j = 0; j < end; j++){
                 if ((*m_grid)[i][j] != nullptr){
-                    (*m_grid)[i][j]->SetBitmap(wxNullBitmap);
                     continue;
                 }
                 
                 wxBitmapButton *btn = new wxBitmapButton(this->frameMFd, wxID_ANY, wxNullBitmap,
-                                                         wxPoint(this->grid->GetDataMap().at(code).at(j).x, this->grid->GetDataMap().at(code).at(j).y),
-                                                         wxSize(this->grid->GetDataMap().at(code).at(j).dx, this->grid->GetDataMap().at(code).at(j).dy), wxBORDER_NONE);
+                                                         wxPoint(this->grid->GetDataMap().at(i).at(j).x, this->grid->GetDataMap().at(i).at(j).y),
+                                                         wxSize(this->grid->GetDataMap().at(i).at(j).dx, this->grid->GetDataMap().at(i).at(j).dy)/*, wxBORDER_NONE*/);
                 btn->Bind(wxEVT_BUTTON, &TriLogic::GameModeStart, this);
-                
-                
                 (*m_grid)[i][j] = btn;
             }
         }
