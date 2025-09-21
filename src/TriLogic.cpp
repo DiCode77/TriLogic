@@ -143,7 +143,7 @@ void TriLogic::InitBitmapButtonGrid(std::vector<std::vector<wxBitmapButton*>> *m
                 
                 wxBitmapButton *btn = new wxBitmapButton(this->frameMFd, wxID_ANY, wxNullBitmap,
                                                          wxPoint(this->grid->GetDataMap().at(i).at(j).x, this->grid->GetDataMap().at(i).at(j).y),
-                                                         wxSize(this->grid->GetDataMap().at(i).at(j).dx, this->grid->GetDataMap().at(i).at(j).dy)/*, wxBORDER_NONE*/);
+                                                         wxSize(this->grid->GetDataMap().at(i).at(j).dx, this->grid->GetDataMap().at(i).at(j).dy), wxBORDER_NONE);
                 btn->Bind(wxEVT_BUTTON, &TriLogic::GameModeStart, this);
                 (*m_grid)[i][j] = btn;
             }
@@ -155,6 +155,8 @@ void TriLogic::InitBitmapButtonGrid(std::vector<std::vector<wxBitmapButton*>> *m
 void TriLogic::UpdateMatchSizeWindow(){
     if (!this->vec_grid.empty()){
         InitBitmapButtonGrid(&this->vec_grid, static_cast<int>(this->vec_grid.size()), this->grid->GetGridLines());
+        SetGridCellSize(wxSize(this->grid->GetDataMap().at(0).at(0).dx, this->grid->GetDataMap().at(0).at(0).dy));
+        
         for (int i = 0; i < this->vec_grid.size(); i++){
             for (int j = 0; j < this->vec_grid[i].size(); j++){
                 this->vec_grid[i][j]->SetPosition(wxPoint(this->grid->GetDataMap().at(i).at(j).x, this->grid->GetDataMap().at(i).at(j).y));
