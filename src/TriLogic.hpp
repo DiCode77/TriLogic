@@ -27,6 +27,13 @@ enum ID_START_BUTTON{
     ID_1VSAI
 };
 
+typedef struct SET_SETTINGS{
+    wxColour main_window_colors = {0, 0, 0};
+    wxColour game_window_colors = {0, 0, 0};
+    wxColour game_grid_colors   = {0, 0, 0};
+    int      mesh_seze_grid     = 3;
+} SET_SETTINGS;
+
 class TriLogic : public wxFrame{
     GridDynamic *grid;
     std::vector<std::vector<wxBitmapButton*>> vec_grid;
@@ -34,6 +41,7 @@ class TriLogic : public wxFrame{
     wxSize grid_cell_size;
     short whoseMove = 0;
     ID_START_BUTTON ID_SELECT_BT_SG;
+    SET_SETTINGS p_settings;
     
 public:
     TriLogic(const wxString title, const wxPoint point, const wxSize size);
@@ -67,6 +75,7 @@ private:
     const wxSize &GetGridCellSize() const;
     void SetSelectIdButton(int);
     ID_START_BUTTON GetSelectIdButton();
+    SET_SETTINGS &GetPSettings();
     
     void SetSettingsForGames(wxCommandEvent&);
     void SetSettingsProperty(wxPropertyGridEvent&);

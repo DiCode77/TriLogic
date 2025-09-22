@@ -52,9 +52,10 @@ void TriLogic::ShowMatchField(wxCommandEvent &ev){
         this->frameMFd->Bind(wxEVT_CLOSE_WINDOW, &TriLogic::DestroyFrame, this);
         this->frameMFd->SetBackgroundStyle(wxBG_STYLE_PAINT);
         
-        this->grid = new GridDynamic(this->frameMFd, 8);
+        this->grid = new GridDynamic(this->frameMFd, GetPSettings().mesh_seze_grid);
         this->grid->SetFuncUpdate(std::bind(&TriLogic::UpdateMatchSizeWindow, this));
         this->grid->DrawingGridDef(this->frameMFd->GetClientSize());
+        this->grid->SetColorIsGrid(GetPSettings().game_grid_colors);
         
         this->frameMFd->Centre();
         this->frameMFd->Show();
@@ -186,6 +187,8 @@ void TriLogic::ReturnToMainWindow(wxCommandEvent&){
         this->vec_grid.clear();
         this->vecbit_on.clear();
         this->whoseMove = 0;
+        this->grid->Destroy();
+        this->grid = nullptr;
         this->Show();
     }
 }
@@ -262,6 +265,10 @@ ID_START_BUTTON TriLogic::GetSelectIdButton(){
     return this->ID_SELECT_BT_SG;
 }
 
+SET_SETTINGS &TriLogic::GetPSettings(){
+    return this->p_settings;
+}
+
 
 void TriLogic::SetSettingsForGames(wxCommandEvent&){
     if (this->frame_settings == nullptr){
@@ -319,25 +326,37 @@ void TriLogic::SetSettingsProperty(wxPropertyGridEvent &event){
     else if (event.GetPropertyName() == "Game_grid_color"){
         MyColourProperty *mcp = dynamic_cast<MyColourProperty*>(event.GetProperty());
         if (mcp){
-            this->grid->SetColorIsGrid(mcp->GetColors());
-            this->grid->Update();
-            this->grid->Refresh();
+            GetPSettings().game_grid_colors = mcp->GetColors();
+            
+            if (this->grid != nullptr){
+                this->grid->SetColorIsGrid(GetPSettings().game_grid_colors);
+                this->grid->Update();
+                this->grid->Refresh();
+            }
         }
     }
     else if (event.GetPropertyName() == "Game_color_window"){
         MyColourProperty *mcp = dynamic_cast<MyColourProperty*>(event.GetProperty());
         if (mcp && this->frameMFd != nullptr){
-            this->grid->SetBackgroundColour(wxColour(mcp->GetColors()));
-            this->grid->Update();
-            this->grid->Refresh();
+            GetPSettings().game_window_colors = mcp->GetColors();
+            
+            if (this->grid != nullptr){
+                this->grid->SetBackgroundColour(GetPSettings().game_window_colors);
+                this->grid->Update();
+                this->grid->Refresh();
+            }
         }
     }
     else if (event.GetPropertyName() == "Mesh_size_grid"){
         long val = event.GetValue().GetLong();
         if (val >= 3){
-            this->grid->SetGridLines(static_cast<int>(val));
-            this->grid->Update();
-            this->grid->Refresh();
+            GetPSettings().mesh_seze_grid = static_cast<int>(val);
+            
+            if (this->grid){
+                this->grid->SetGridLines(GetPSettings().mesh_seze_grid);
+                this->grid->Update();
+                this->grid->Refresh();
+            }
         }
     }
 }
