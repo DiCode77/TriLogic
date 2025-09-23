@@ -34,6 +34,9 @@ TriLogic::TriLogic(const wxString title, const wxPoint point, const wxSize size)
     this->button_usVsus->Bind(wxEVT_BUTTON, &TriLogic::ShowMatchField, this);
     this->button_usVsai->Bind(wxEVT_BUTTON, &TriLogic::ShowMatchField, this);
     this->bbitmap_settings->Bind(wxEVT_BUTTON, &TriLogic::SetSettingsForGames, this);
+    
+    this->button_usVsus->Disable();
+    this->button_usVsai->Disable();
 }
 
 wxString TriLogic::GetFoolDirPatch(const char *folder, const char *name, const char *ext){
