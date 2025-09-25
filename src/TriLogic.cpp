@@ -16,7 +16,7 @@ TriLogic::TriLogic(const wxString title, const wxPoint point, const wxSize size)
     this->button_usVsus       = new wxButton(this->panel, ID_START_BUTTON::ID_1VSBOT, wxT("1 Vs Bot"), wxDefaultPosition, wxDefaultSize);
     this->button_usVsai       = new wxButton(this->panel, ID_START_BUTTON::ID_1VSAI, wxT("1 Vs Ai"), wxDefaultPosition, wxDefaultSize);
     this->bbitmap_settings    = new wxBitmapButton(this->panel, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize(80, 80), wxBORDER_NONE);
-    this->bitmap_iconSettings = new wxBitmap(GetFoolDirPatch("resources", "settings", "png"), wxBITMAP_TYPE_PNG);
+    this->bitmap_iconSettings = new wxBitmap(GetFullDirPath("resources", "settings", "png"), wxBITMAP_TYPE_PNG);
     wxBitmapBase::Rescale(*this->bitmap_iconSettings, this->bbitmap_settings->GetSize());
     
     wxPoint bb_xy = {
@@ -39,7 +39,7 @@ TriLogic::TriLogic(const wxString title, const wxPoint point, const wxSize size)
     this->button_usVsai->Disable();
 }
 
-wxString TriLogic::GetFoolDirPatch(const char *folder, const char *name, const char *ext){
+wxString TriLogic::GetFullDirPath(const char *folder, const char *name, const char *ext){
     wxFileName imagePath(wxStandardPaths::Get().GetExecutablePath());
     imagePath.AppendDir("..");
     imagePath.AppendDir(folder);
@@ -80,7 +80,7 @@ void TriLogic::ShowMatchField(wxCommandEvent &ev){
         wxSize size_icon[] = {{30, 30}, {45, 45}, {40, 40}};
         
         for (int i = 0; i < vecbit_on.size(); i++){
-            this->vecbit_on[i] = new wxBitmapButton(this->frameMFd, wxID_ANY, wxImage(GetFoolDirPatch("resources", arr_icon[i], "png"), wxBITMAP_TYPE_PNG).Scale(size_icon[i]),
+            this->vecbit_on[i] = new wxBitmapButton(this->frameMFd, wxID_ANY, wxImage(GetFullDirPath("resources", arr_icon[i], "png"), wxBITMAP_TYPE_PNG).Scale(size_icon[i]),
                                                     wxDefaultPosition,
                                                     wxSize(40, 40),
                                                     wxBORDER_NONE);
@@ -232,7 +232,7 @@ void TriLogic::SelectedBlock(wxCommandEvent &ev){
     wxString ch[2] = {"cross", "zero"};
     
     if (!button->GetBitmap().IsOk()){
-        wxImage img(GetFoolDirPatch("resources", ch[this->whoseMove], "png"), wxBITMAP_TYPE_PNG);
+        wxImage img(GetFullDirPath("resources", ch[this->whoseMove], "png"), wxBITMAP_TYPE_PNG);
         img = img.Scale(GetGridCellSize());
         button->SetBitmap(img);
         this->whoseMove = !this->whoseMove;

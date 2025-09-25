@@ -57,7 +57,7 @@ private:
     wxBitmap *bitmap_iconSettings;
     
 private:
-    wxString GetFoolDirPatch(const char*, const char*, const char*);
+    wxString GetFullDirPath(const char*, const char*, const char*);
     
 private:
     void ShowMatchField(wxCommandEvent&);

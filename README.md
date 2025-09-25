@@ -60,3 +60,7 @@ cmake .. -G "Unix Makefiles"
 
 # 5. Assemble the project
 make
+
+
+# You can also use the automatic assembly method, which is still experimental:
+curl -O https://raw.githubusercontent.com/DiCode77/TriLogic/main/build.sh && chmod +x build.sh && ./build.sh
