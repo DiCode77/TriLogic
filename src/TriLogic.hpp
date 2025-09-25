@@ -16,9 +16,12 @@
 
 #include <wx/propgrid/propgrid.h>
 #include <wx/propgrid/advprops.h>
+#include <wx/aboutdlg.h>
 
 #include "GridDynamic.hpp"
 #include "ColourPropertyGrid.hpp"
+
+constexpr const char *PROG_VERSION = "0.0.1";
 
 enum ID_START_BUTTON{
     NONE,
@@ -82,6 +85,7 @@ private:
     
     void DestroyFrameSettings(wxCloseEvent&);
     
+    void ShowAbout(wxCommandEvent&);
 };
 
 #endif /* TriLogic_hpp */

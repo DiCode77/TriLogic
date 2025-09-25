@@ -37,6 +37,31 @@ TriLogic::TriLogic(const wxString title, const wxPoint point, const wxSize size)
     
     this->button_usVsus->Disable();
     this->button_usVsai->Disable();
+    
+    wxMenuBar* menuBar = new wxMenuBar();
+    wxMenu* menu_ab = new wxMenu();
+    menu_ab->Append(wxID_ABOUT, "About TriLogic");
+    menu_ab->Append(ID_START_BUTTON::ID_1VS1,   wxString("Play: ").append(this->button_1vs1->GetLabel()));
+    menu_ab->Append(ID_START_BUTTON::ID_1VSBOT, wxString("Play: ").append(this->button_usVsus->GetLabel()));
+    menu_ab->Append(ID_START_BUTTON::ID_1VSAI,  wxString("Play: ").append(this->button_usVsai->GetLabel()));
+    menuBar->Append(menu_ab, "&Mode");
+    SetMenuBar(menuBar);
+    
+    this->Bind(wxEVT_MENU, &TriLogic::ShowAbout,      this, wxID_ABOUT);
+    this->Bind(wxEVT_MENU, &TriLogic::ShowMatchField, this, ID_START_BUTTON::ID_1VS1);
+    this->Bind(wxEVT_MENU, &TriLogic::ShowMatchField, this, ID_START_BUTTON::ID_1VSBOT);
+    this->Bind(wxEVT_MENU, &TriLogic::ShowMatchField, this, ID_START_BUTTON::ID_1VSAI);
+    
+    menu_ab->Enable(ID_START_BUTTON::ID_1VSBOT, false);
+    menu_ab->Enable(ID_START_BUTTON::ID_1VSAI,  false);
+}
+
+void TriLogic::ShowAbout(wxCommandEvent&){
+    wxAboutDialogInfo info;
+    info.SetName("TriLogic Game");
+    info.SetVersion(PROG_VERSION);
+    info.SetCopyright("(C) 2019 - 2025 DiCode77.");
+    wxAboutBox(info);
 }
 
 wxString TriLogic::GetFullDirPath(const char *folder, const char *name, const char *ext){
@@ -50,8 +75,12 @@ wxString TriLogic::GetFullDirPath(const char *folder, const char *name, const ch
 
 void TriLogic::ShowMatchField(wxCommandEvent &ev){
     if (this->frameMFd == nullptr){
-        this->frameMFd = new wxFrame(this->panel, wxID_ANY, wxString(" Start Games! ").append(((wxButton*)(ev.GetEventObject()))->GetLabel()), wxDefaultPosition, wxSize(700, 700),
-                                                                                                                                                            wxCLOSE_BOX | wxMINIMIZE_BOX | wxMAXIMIZE_BOX);
+        
+        wxString label_txt;
+        if (ev.GetEventType() == wxEVT_BUTTON)    label_txt = ((wxButton*)(ev.GetEventObject()))->GetLabel();
+        else if (ev.GetEventType() == wxEVT_MENU) label_txt = GetMenuBar()->FindItem(ev.GetId())->GetItemLabelText();
+        
+        this->frameMFd = new wxFrame(this->panel, wxID_ANY, wxString(" Start Games! ").append(label_txt), wxDefaultPosition, wxSize(700, 700), wxCLOSE_BOX | wxMINIMIZE_BOX | wxMAXIMIZE_BOX);
         this->frameMFd->Bind(wxEVT_CLOSE_WINDOW, &TriLogic::DestroyFrame, this);
         this->frameMFd->SetBackgroundStyle(wxBG_STYLE_PAINT);
         
