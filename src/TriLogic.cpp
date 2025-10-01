@@ -88,6 +88,7 @@ void TriLogic::ShowMatchField(wxCommandEvent &ev){
         this->grid->SetFuncUpdate(std::bind(&TriLogic::UpdateMatchSizeWindow, this));
         this->grid->DrawingGridDef(this->frameMFd->GetClientSize());
         this->grid->SetColorIsGrid(GetPSettings().game_grid_colors);
+        this->grid->SetColorIsWind(GetPSettings().game_window_colors);
         
         this->frameMFd->Centre();
         this->frameMFd->Show();
@@ -369,10 +370,10 @@ void TriLogic::SetSettingsProperty(wxPropertyGridEvent &event){
     }
     else if (event.GetPropertyName() == "Game_color_window"){
         MyColourProperty *mcp = dynamic_cast<MyColourProperty*>(event.GetProperty());
-        if (mcp && this->frameMFd != nullptr){
+        if (mcp){
             GetPSettings().game_window_colors = mcp->GetColors();
             
-            if (this->grid != nullptr){
+            if (this->frameMFd != nullptr && this->grid != nullptr){
                 this->grid->SetBackgroundColour(GetPSettings().game_window_colors);
                 this->grid->Update();
                 this->grid->Refresh();

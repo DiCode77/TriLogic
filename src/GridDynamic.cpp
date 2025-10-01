@@ -119,3 +119,9 @@ void GridDynamic::SetFuncUpdate(std::function<void()> func){
 void GridDynamic::SetColorIsGrid(wxColor color){
     this->color_grid = color;
 }
+
+void GridDynamic::SetColorIsWind(wxColor color){
+    this->SetBackgroundColour((color != wxColor(0, 0, 0)) ? color : this->GetBackgroundColour());
+    this->Update();
+    this->Refresh();
+}

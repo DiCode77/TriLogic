@@ -41,6 +41,7 @@ private:
 public:
     void SetFuncUpdate(std::function<void()> func);
     void SetColorIsGrid(wxColor);
+    void SetColorIsWind(wxColor);
 };
 
 #endif /* GridDynamic_hpp */
