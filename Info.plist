@@ -7,9 +7,9 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>TriLogic</string>
     <key>CFBundleGetInfoString</key>
-	<string>$(PRODUCT_NAME) 2025 DiCode77</string>
+	<string>TriLogic 2025 DiCode77</string>
     <key>CFBundleIconFile</key>
 	<string>TriLogic.icns</string>
     <key>CFBundleIdentifier</key>
@@ -19,7 +19,7 @@
 	<key>CFBundleLongVersionString</key>
 	<string></string>
     <key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>TriLogic</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleSignature</key>
