@@ -39,8 +39,9 @@ typedef struct SET_SETTINGS{
 
 class TriLogic : public wxFrame{
     GridDynamic *grid;
-    std::vector<std::vector<wxBitmapButton*>> vec_grid;
-    std::vector<wxBitmapButton*> vecbit_on;
+    std::vector<std::vector<wxBitmapButton*>> vec_grid; // for buttons grid
+    std::vector<wxBitmapButton*> vecbit_on; // for Buttons Setting
+    std::vector<std::vector<int>> vec_matrix_grid; // to preserve the active matrix grid
     wxSize grid_cell_size;
     short whoseMove = 0;
     ID_START_BUTTON ID_SELECT_BT_SG;
@@ -86,6 +87,7 @@ private:
     void DestroyFrameSettings(wxCloseEvent&);
     
     void ShowAbout(wxCommandEvent&);
+    void TurnOffAllButtons(std::vector<std::vector<wxBitmapButton*>>*, bool);
 };
 
 #endif /* TriLogic_hpp */

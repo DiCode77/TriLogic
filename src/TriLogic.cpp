@@ -393,3 +393,15 @@ void TriLogic::SetSettingsProperty(wxPropertyGridEvent &event){
         }
     }
 }
+
+void TriLogic::TurnOffAllButtons(std::vector<std::vector<wxBitmapButton*>> *vec_grid, bool isStatus){
+    if (vec_grid != nullptr && !vec_grid->empty()){
+        std::ranges::for_each(vec_grid->begin(), vec_grid->end(), [isStatus](std::vector<wxBitmapButton*> vec){
+            std::ranges::for_each(vec.begin(), vec.end(), [isStatus](wxBitmapButton *isButton){
+                if (isButton != nullptr){
+                    isButton->Enable(isStatus);
+                }
+            });
+        });
+    }
+}
