@@ -222,6 +222,7 @@ void TriLogic::ReturnToMainWindow(wxCommandEvent&){
         this->whoseMove = 0;
         this->grid->Destroy();
         this->grid = nullptr;
+        this->vec_matrix_grid.clear();
         this->Show();
     }
 }
@@ -234,6 +235,7 @@ void TriLogic::ReturnGameToStart(wxCommandEvent&){
             }
         }
     }
+    this->vec_matrix_grid.clear();
     this->whoseMove = 0;
 }
 
@@ -409,15 +411,16 @@ void TriLogic::TurnOffAllButtons(std::vector<std::vector<wxBitmapButton*>> *vec_
 
 void TriLogic::IdentifyActiveCells(std::vector<std::vector<wxBitmapButton*>> *vec_grid, wxBitmapButton *b_but, std::vector<std::vector<int>> *matrix, int id){
     if (vec_grid != nullptr && !vec_grid->empty()){
-        matrix->clear();
-        matrix->resize(vec_grid->size());
-        
-        std::ranges::for_each(matrix->begin(), matrix->end(), [&vec_grid](std::vector<int> &m_vec){
-            m_vec.resize(vec_grid->size());
-            std::ranges::for_each(m_vec.begin(), m_vec.end(), [](int &val){
-                val = -1;
+        if (matrix->empty()){
+            matrix->resize(vec_grid->size());
+            
+            std::ranges::for_each(matrix->begin(), matrix->end(), [&vec_grid](std::vector<int> &m_vec){
+                m_vec.resize(vec_grid->size());
+                std::ranges::for_each(m_vec.begin(), m_vec.end(), [](int &val){
+                    val = -1;
+                });
             });
-        });
+        }
         
         for (int i = 0; i < vec_grid->size(); i++){
             for (int j = 0; j < (*vec_grid)[i].size(); j++){

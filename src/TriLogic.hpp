@@ -41,7 +41,7 @@ class TriLogic : public wxFrame{
     GridDynamic *grid;
     std::vector<std::vector<wxBitmapButton*>> vec_grid; // for buttons grid
     std::vector<wxBitmapButton*> vecbit_on; // for Buttons Setting
-    std::vector<std::vector<int>> vec_matrix_grid; // to preserve the active matrix grid
+    std::vector<std::vector<int>> vec_matrix_grid{{-1}}; // to preserve the active matrix grid
     wxSize grid_cell_size;
     short whoseMove = 0;
     ID_START_BUTTON ID_SELECT_BT_SG;
