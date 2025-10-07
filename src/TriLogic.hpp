@@ -88,6 +88,7 @@ private:
     
     void ShowAbout(wxCommandEvent&);
     void TurnOffAllButtons(std::vector<std::vector<wxBitmapButton*>>*, bool);
+    void IdentifyActiveCells(std::vector<std::vector<wxBitmapButton*>>*, wxBitmapButton*, std::vector<std::vector<int>>*, int);
 };
 
 #endif /* TriLogic_hpp */

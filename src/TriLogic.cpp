@@ -246,6 +246,7 @@ void TriLogic::GameModeStart(wxCommandEvent &ev){
     switch (GetSelectIdButton()){
         case ID_START_BUTTON::ID_1VS1:
             SelectedBlock(ev);
+            IdentifyActiveCells(&this->vec_grid, static_cast<wxBitmapButton*>(ev.GetEventObject()), &this->vec_matrix_grid, !this->whoseMove);
             break;
         case ID_START_BUTTON::ID_1VSBOT:
             break;
@@ -403,5 +404,27 @@ void TriLogic::TurnOffAllButtons(std::vector<std::vector<wxBitmapButton*>> *vec_
                 }
             });
         });
+    }
+}
+
+void TriLogic::IdentifyActiveCells(std::vector<std::vector<wxBitmapButton*>> *vec_grid, wxBitmapButton *b_but, std::vector<std::vector<int>> *matrix, int id){
+    if (vec_grid != nullptr && !vec_grid->empty()){
+        matrix->clear();
+        matrix->resize(vec_grid->size());
+        
+        std::ranges::for_each(matrix->begin(), matrix->end(), [&vec_grid](std::vector<int> &m_vec){
+            m_vec.resize(vec_grid->size());
+            std::ranges::for_each(m_vec.begin(), m_vec.end(), [](int &val){
+                val = -1;
+            });
+        });
+        
+        for (int i = 0; i < vec_grid->size(); i++){
+            for (int j = 0; j < (*vec_grid)[i].size(); j++){
+                if ((*vec_grid)[i][j] == b_but){
+                    (*matrix)[i][j] = id;
+                }
+            }
+        }
     }
 }
