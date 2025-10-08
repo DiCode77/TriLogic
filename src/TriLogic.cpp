@@ -219,10 +219,10 @@ void TriLogic::ReturnToMainWindow(wxCommandEvent&){
         this->frameMFd = nullptr;
         this->vec_grid.clear();
         this->vecbit_on.clear();
-        this->whoseMove = 0;
+        this->whoseMove = 1;
         this->grid->Destroy();
         this->grid = nullptr;
-        this->vec_matrix_grid.clear();
+        this->st_pm_grid.matrix.clear();
         this->Show();
     }
 }
@@ -232,11 +232,12 @@ void TriLogic::ReturnGameToStart(wxCommandEvent&){
         for (int i = 0; i <  this->vec_grid.size(); i++){
             for (int j = 0; j < this->vec_grid[i].size(); j++){
                 this->vec_grid[i][j]->SetBitmap(wxNullBitmap);
+                this->vec_grid[i][j]->SetBackgroundColour(wxNullColour);
             }
         }
     }
-    this->vec_matrix_grid.clear();
-    this->whoseMove = 0;
+    this->st_pm_grid.matrix.clear();
+    this->whoseMove = 1;
 }
 
 
@@ -248,7 +249,8 @@ void TriLogic::GameModeStart(wxCommandEvent &ev){
     switch (GetSelectIdButton()){
         case ID_START_BUTTON::ID_1VS1:
             SelectedBlock(ev);
-            IdentifyActiveCells(&this->vec_grid, static_cast<wxBitmapButton*>(ev.GetEventObject()), &this->vec_matrix_grid, !this->whoseMove);
+            IdentifyActiveCells(&this->vec_grid, static_cast<wxBitmapButton*>(ev.GetEventObject()), &this->st_pm_grid, !this->whoseMove);
+            CheckGameStatus(&this->st_pm_grid, static_cast<wxBitmapButton*>(ev.GetEventObject()));
             break;
         case ID_START_BUTTON::ID_1VSBOT:
             break;
@@ -262,7 +264,7 @@ void TriLogic::GameModeStart(wxCommandEvent &ev){
 
 void TriLogic::SelectedBlock(wxCommandEvent &ev){
     wxBitmapButton *button = (wxBitmapButton*)ev.GetEventObject();
-    wxString ch[2] = {"cross", "zero"};
+    wxString ch[2] = {"zero", "cross"};
     
     if (!button->GetBitmap().IsOk()){
         wxImage img(GetFullDirPath("resources", ch[this->whoseMove], "png"), wxBITMAP_TYPE_PNG);
@@ -328,7 +330,7 @@ void TriLogic::SetSettingsForGames(wxCommandEvent&){
         }
         
         wxPGProperty *game_w = title_name->AppendChild(new wxPropertyCategory("Game Window"));
-        game_w->AppendChild(new wxEnumProperty("Mesh size", "Mesh_size_grid", arr_lab, arr_val, 1));
+        game_w->AppendChild(new wxEnumProperty("Mesh size", "Mesh_size_grid", arr_lab, arr_val, 3));
         game_w->AppendChild(new MyColourProperty(this, "Color Grid", "Game_grid_color"));
         game_w->AppendChild(new MyColourProperty(this, "Color Window", "Game_color_window"));
         
@@ -409,12 +411,13 @@ void TriLogic::TurnOffAllButtons(std::vector<std::vector<wxBitmapButton*>> *vec_
     }
 }
 
-void TriLogic::IdentifyActiveCells(std::vector<std::vector<wxBitmapButton*>> *vec_grid, wxBitmapButton *b_but, std::vector<std::vector<int>> *matrix, int id){
+// Initialize and build a matrix according to the selected cells in the grid
+void TriLogic::IdentifyActiveCells(std::vector<std::vector<wxBitmapButton*>> *vec_grid, wxBitmapButton *b_but, DATA_POS_MATRIX *st, int id){
     if (vec_grid != nullptr && !vec_grid->empty()){
-        if (matrix->empty()){
-            matrix->resize(vec_grid->size());
+        if (st->matrix.empty()){
+            st->matrix.resize(vec_grid->size());
             
-            std::ranges::for_each(matrix->begin(), matrix->end(), [&vec_grid](std::vector<int> &m_vec){
+            std::ranges::for_each(st->matrix.begin(), st->matrix.end(), [&vec_grid](std::vector<int> &m_vec){
                 m_vec.resize(vec_grid->size());
                 std::ranges::for_each(m_vec.begin(), m_vec.end(), [](int &val){
                     val = -1;
@@ -425,9 +428,121 @@ void TriLogic::IdentifyActiveCells(std::vector<std::vector<wxBitmapButton*>> *ve
         for (int i = 0; i < vec_grid->size(); i++){
             for (int j = 0; j < (*vec_grid)[i].size(); j++){
                 if ((*vec_grid)[i][j] == b_but){
-                    (*matrix)[i][j] = id;
+                    st->matrix[i][j] = id;
+                    st->last_pos = std::make_pair(i, j);
                 }
             }
         }
+    }
+}
+
+// Here, the selected cells are checked to determine the winner.
+void TriLogic::CheckGameStatus(const DATA_POS_MATRIX *st, wxBitmapButton *button){
+    int sum = 0;
+    int points = (st->matrix.size() > 3) ? 4 : 3;
+    const auto m_vec = st->matrix;
+    const auto m_pir = st->last_pos;
+    const int mp_last = m_vec[m_pir.first][m_pir.second];
+    std::vector<wxBitmapButton*> v_button;
+    
+    // We determine horizontal matches.
+    for (int i = 0; i < m_vec[m_pir.first].size(); i++){ //
+        if (m_vec[m_pir.first][i] != mp_last){
+            sum = 0;
+        }
+        else{
+            sum++;
+            v_button.push_back(vec_grid[m_pir.first][i]);
+        }
+        
+        if (sum == points){
+            SetCellColor(&v_button);
+            v_button.clear();
+            return;
+        }
+    }
+    
+    // We determine vertical matches.
+    sum = 0;
+    v_button.clear();
+    for (int i = 0; i < m_vec.size(); i++){ //
+        if (m_vec[i][m_pir.second] != mp_last){
+            sum = 0;
+        }
+        else{
+            sum++;
+            v_button.push_back(vec_grid[i][m_pir.second]);
+        }
+        
+        if (sum == points){
+            SetCellColor(&v_button);
+            v_button.clear();
+            return;
+        }
+    }
+    
+    // We determine the matches in the matrix from left to right.
+    sum = 0;
+    v_button.clear();
+    auto l_toR = DiagonalPushFromLeftToRight(m_pir.first, m_pir.second);
+    for (int x = l_toR.first, y = l_toR.second; x < m_vec.size() && y < m_vec.size(); x++, y++){
+        if (m_vec[x][y] != mp_last){
+            sum = 0;
+        }
+        else{
+            sum++;
+            v_button.push_back(vec_grid[x][y]);
+        }
+        
+        if (sum == points){
+            SetCellColor(&v_button);
+            v_button.clear();
+            return;
+        }
+    }
+    
+    // We determine the matches in the matrix from right to left.
+    sum = 0;
+    v_button.clear();
+    auto r_toL = DiagonalPushFromRightToLeft(m_pir.first, m_pir.second, static_cast<int>(m_vec.size()));
+    for (int x = r_toL.first, y = r_toL.second; x < m_vec.size() && y < m_vec.size(); x++, y--){
+        if (m_vec[x][y] != mp_last){
+            sum = 0;
+        }
+        else{
+            sum++;
+            v_button.push_back(vec_grid[x][y]);
+        }
+        
+        if (sum == points){
+            SetCellColor(&v_button);
+            v_button.clear();
+            return;
+        }
+    }
+}
+
+// We determine the starting position for steps from left to right.
+std::pair<int, int>TriLogic::DiagonalPushFromLeftToRight(int x, int y){
+    while (x != 0 && y != 0){
+        x--;
+        y--;
+    }
+    return std::make_pair(x, y);
+}
+
+// We determine the starting position for steps from right to left.
+std::pair<int, int>TriLogic::DiagonalPushFromRightToLeft(int x, int y, int max){
+    while (x != 0 && y != (max -1)){
+        x--;
+        y++;
+    }
+    return std::make_pair(x, y);
+}
+
+// Set the color for selected cells.
+void TriLogic::SetCellColor(std::vector<wxBitmapButton*> *b){
+    for (int i = 0;i < b->size(); i++){
+        (*b)[i]->SetBackgroundColour(wxColour(200, 220, 255));
     }
 }

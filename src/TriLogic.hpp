@@ -37,15 +37,20 @@ typedef struct SET_SETTINGS{
     int      mesh_seze_grid     = 3;
 } SET_SETTINGS;
 
+typedef struct DATA_POS_MATRIX{
+    std::pair<int, int> last_pos;
+    std::vector<std::vector<int>> matrix;
+} DATA_POS_MATRIX;
+
 class TriLogic : public wxFrame{
     GridDynamic *grid;
     std::vector<std::vector<wxBitmapButton*>> vec_grid; // for buttons grid
     std::vector<wxBitmapButton*> vecbit_on; // for Buttons Setting
-    std::vector<std::vector<int>> vec_matrix_grid{{-1}}; // to preserve the active matrix grid
     wxSize grid_cell_size;
-    short whoseMove = 0;
+    short whoseMove = 1;
     ID_START_BUTTON ID_SELECT_BT_SG;
     SET_SETTINGS p_settings;
+    DATA_POS_MATRIX st_pm_grid;
     
 public:
     TriLogic(const wxString title, const wxPoint point, const wxSize size);
@@ -88,7 +93,11 @@ private:
     
     void ShowAbout(wxCommandEvent&);
     void TurnOffAllButtons(std::vector<std::vector<wxBitmapButton*>>*, bool);
-    void IdentifyActiveCells(std::vector<std::vector<wxBitmapButton*>>*, wxBitmapButton*, std::vector<std::vector<int>>*, int);
+    void IdentifyActiveCells(std::vector<std::vector<wxBitmapButton*>>*, wxBitmapButton*, DATA_POS_MATRIX*, int);
+    void CheckGameStatus(const DATA_POS_MATRIX*, wxBitmapButton*);
+    std::pair<int, int>DiagonalPushFromLeftToRight(int, int);
+    std::pair<int, int>DiagonalPushFromRightToLeft(int, int, int);
+    void SetCellColor(std::vector<wxBitmapButton*>*);
 };
 
 #endif /* TriLogic_hpp */
