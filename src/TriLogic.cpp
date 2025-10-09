@@ -122,6 +122,9 @@ void TriLogic::ShowMatchField(wxCommandEvent &ev){
     }
 }
 
+// Several actions take place here.
+// First, if the buttons in the cells are initialized for the first time, only their declaration occurs.
+// Second, if the buttons already existed but the grid size has changed, then the old buttons must be destroyed and new ones initialized at the old coordinates and new ones.
 void TriLogic::InitBitmapButtonGrid(std::vector<std::vector<wxBitmapButton*>> *m_grid, int start, int end){
     if (m_grid != nullptr && start != end){
         wxCommandEvent ev_cell(wxEVT_BUTTON, NULL);
@@ -217,27 +220,34 @@ void TriLogic::ReturnToMainWindow(wxCommandEvent&){
     if (this->frameMFd != nullptr){
         this->frameMFd->Destroy();
         this->frameMFd = nullptr;
-        this->vec_grid.clear();
+        this->DestroyBitmapButtons(&this->vec_grid);
         this->vecbit_on.clear();
         this->whoseMove = 1;
         this->grid->Destroy();
         this->grid = nullptr;
         this->st_pm_grid.matrix.clear();
         this->Show();
+        this->SetGameStatus(false);
     }
 }
 
+// For cleaning all fields and fields
 void TriLogic::ReturnGameToStart(wxCommandEvent&){
     if (!this->vec_grid.empty()){
         for (int i = 0; i <  this->vec_grid.size(); i++){
             for (int j = 0; j < this->vec_grid[i].size(); j++){
                 this->vec_grid[i][j]->SetBitmap(wxNullBitmap);
                 this->vec_grid[i][j]->SetBackgroundColour(wxNullColour);
+                
+                if (!this->vec_grid[i][j]->IsEnabled()){
+                    this->vec_grid[i][j]->Enable(true);
+                }
             }
         }
     }
     this->st_pm_grid.matrix.clear();
     this->whoseMove = 1;
+    this->SetGameStatus(false);
 }
 
 
@@ -246,18 +256,20 @@ void TriLogic::ExitAllWindow(wxCommandEvent&){
 }
 
 void TriLogic::GameModeStart(wxCommandEvent &ev){
-    switch (GetSelectIdButton()){
-        case ID_START_BUTTON::ID_1VS1:
-            SelectedBlock(ev);
-            IdentifyActiveCells(&this->vec_grid, static_cast<wxBitmapButton*>(ev.GetEventObject()), &this->st_pm_grid, !this->whoseMove);
-            CheckGameStatus(&this->st_pm_grid, static_cast<wxBitmapButton*>(ev.GetEventObject()));
-            break;
-        case ID_START_BUTTON::ID_1VSBOT:
-            break;
-        case ID_START_BUTTON::ID_1VSAI:
-            break;
-        default:
-            break;
+    if (!IsTheGameOver()){
+        switch (GetSelectIdButton()){
+            case ID_START_BUTTON::ID_1VS1:
+                SelectedBlock(ev);
+                IdentifyActiveCells(&this->vec_grid, static_cast<wxBitmapButton*>(ev.GetEventObject()), &this->st_pm_grid, !this->whoseMove);
+                CheckGameStatus(&this->st_pm_grid, static_cast<wxBitmapButton*>(ev.GetEventObject()));
+                break;
+            case ID_START_BUTTON::ID_1VSBOT:
+                break;
+            case ID_START_BUTTON::ID_1VSAI:
+                break;
+            default:
+                break;
+        }
     }
 }
 
@@ -351,7 +363,23 @@ void TriLogic::DestroyFrameSettings(wxCloseEvent&){
     }
 }
 
+// To completely destroy and free memory in std::vector from wxBitmapButton
+void TriLogic::DestroyBitmapButtons(std::vector<std::vector<wxBitmapButton*>> *v_vec){
+    if (v_vec != nullptr && !v_vec->empty()){
+        std::ranges::for_each(v_vec->begin(), v_vec->end(), [](std::vector<wxBitmapButton*> &vec){
+            std::ranges::for_each(vec.begin(), vec.end(), [](wxBitmapButton *&b){
+                if (b != nullptr){
+                    b->Destroy();
+                    b = nullptr;
+                }
+            });
+        });
+        v_vec->clear();
+        v_vec->shrink_to_fit();
+    }
+}
 
+// To configure, set user variables.
 void TriLogic::SetSettingsProperty(wxPropertyGridEvent &event){
     if (event.GetPropertyName() == "Main_color_window"){
         MyColourProperty *mcp = dynamic_cast<MyColourProperty*>(event.GetProperty());
@@ -399,16 +427,34 @@ void TriLogic::SetSettingsProperty(wxPropertyGridEvent &event){
     }
 }
 
-void TriLogic::TurnOffAllButtons(std::vector<std::vector<wxBitmapButton*>> *vec_grid, bool isStatus){
+// Required to wait for an event to occur, to prevent false presses.
+void TriLogic::SetActiveStateForBButton(std::vector<std::vector<wxBitmapButton*>> *vec_grid, const bool isStatus, const std::vector<wxBitmapButton*> *excep){
     if (vec_grid != nullptr && !vec_grid->empty()){
-        std::ranges::for_each(vec_grid->begin(), vec_grid->end(), [isStatus](std::vector<wxBitmapButton*> vec){
-            std::ranges::for_each(vec.begin(), vec.end(), [isStatus](wxBitmapButton *isButton){
-                if (isButton != nullptr){
+        std::ranges::for_each(vec_grid->begin(), vec_grid->end(), [isStatus, &excep, this](std::vector<wxBitmapButton*> &vec){
+            std::ranges::for_each(vec.begin(), vec.end(), [isStatus, &excep, this](wxBitmapButton *&isButton){
+                if (isButton != nullptr && excep != nullptr && !excep->empty()){
+                    if (!SearchForActiveBButtons(excep, isButton)){
+                        isButton->Enable(isStatus);
+                    }
+                }
+                else if (isButton != nullptr){
                     isButton->Enable(isStatus);
                 }
             });
         });
     }
+}
+
+bool TriLogic::SearchForActiveBButtons(const std::vector<wxBitmapButton*> *vec, const wxBitmapButton *in_button){
+    if (vec != nullptr && !vec->empty() && in_button != nullptr){
+        auto it = std::ranges::find_if(vec->begin(), vec->end(), [&in_button](wxBitmapButton *b){
+            if (b == in_button){
+                return true;
+            }
+        });
+        return *it == in_button;
+    }
+    return false;
 }
 
 // Initialize and build a matrix according to the selected cells in the grid
@@ -439,7 +485,7 @@ void TriLogic::IdentifyActiveCells(std::vector<std::vector<wxBitmapButton*>> *ve
 // Here, the selected cells are checked to determine the winner.
 void TriLogic::CheckGameStatus(const DATA_POS_MATRIX *st, wxBitmapButton *button){
     int sum = 0;
-    int points = (st->matrix.size() > 3) ? 4 : 3;
+    int points = GetTheLengthOfTheSequence(static_cast<int>(st->matrix.size()));
     const auto m_vec = st->matrix;
     const auto m_pir = st->last_pos;
     const int mp_last = m_vec[m_pir.first][m_pir.second];
@@ -456,8 +502,7 @@ void TriLogic::CheckGameStatus(const DATA_POS_MATRIX *st, wxBitmapButton *button
         }
         
         if (sum == points){
-            SetCellColor(&v_button);
-            v_button.clear();
+            EventsAfterTheVictory(&v_button);
             return;
         }
     }
@@ -475,8 +520,7 @@ void TriLogic::CheckGameStatus(const DATA_POS_MATRIX *st, wxBitmapButton *button
         }
         
         if (sum == points){
-            SetCellColor(&v_button);
-            v_button.clear();
+            EventsAfterTheVictory(&v_button);
             return;
         }
     }
@@ -495,8 +539,7 @@ void TriLogic::CheckGameStatus(const DATA_POS_MATRIX *st, wxBitmapButton *button
         }
         
         if (sum == points){
-            SetCellColor(&v_button);
-            v_button.clear();
+            EventsAfterTheVictory(&v_button);
             return;
         }
     }
@@ -515,8 +558,7 @@ void TriLogic::CheckGameStatus(const DATA_POS_MATRIX *st, wxBitmapButton *button
         }
         
         if (sum == points){
-            SetCellColor(&v_button);
-            v_button.clear();
+            EventsAfterTheVictory(&v_button);
             return;
         }
     }
@@ -544,5 +586,45 @@ std::pair<int, int>TriLogic::DiagonalPushFromRightToLeft(int x, int y, int max){
 void TriLogic::SetCellColor(std::vector<wxBitmapButton*> *b){
     for (int i = 0;i < b->size(); i++){
         (*b)[i]->SetBackgroundColour(wxColour(200, 220, 255));
+    }
+}
+
+// We obtain the number of sequences for different fields.
+int TriLogic::GetTheLengthOfTheSequence(int val){
+    switch (val) {
+        case 3:
+        case 4:
+            return 3;
+            break;
+        case 5:
+        case 6:
+            return 4;
+            break;
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+            return 5;
+        default:
+            return 3;
+            break;
+    }
+    return 3;
+}
+
+bool TriLogic::IsTheGameOver(){
+    return this->gameStatus;
+}
+
+void TriLogic::SetGameStatus(bool isStatus){
+    this->gameStatus = isStatus;
+}
+
+void TriLogic::EventsAfterTheVictory(std::vector<wxBitmapButton*> *vec_b){
+    if (vec_b != nullptr && !vec_b->empty()){
+        SetCellColor(vec_b);
+        SetActiveStateForBButton(&this->vec_grid, false, vec_b);
+        vec_b->clear();
+        SetGameStatus(true);
     }
 }

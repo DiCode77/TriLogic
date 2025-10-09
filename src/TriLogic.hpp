@@ -51,6 +51,7 @@ class TriLogic : public wxFrame{
     ID_START_BUTTON ID_SELECT_BT_SG;
     SET_SETTINGS p_settings;
     DATA_POS_MATRIX st_pm_grid;
+    bool gameStatus = false;
     
 public:
     TriLogic(const wxString title, const wxPoint point, const wxSize size);
@@ -90,14 +91,20 @@ private:
     void SetSettingsProperty(wxPropertyGridEvent&);
     
     void DestroyFrameSettings(wxCloseEvent&);
+    void DestroyBitmapButtons(std::vector<std::vector<wxBitmapButton*>>*);
     
     void ShowAbout(wxCommandEvent&);
-    void TurnOffAllButtons(std::vector<std::vector<wxBitmapButton*>>*, bool);
+    void SetActiveStateForBButton(std::vector<std::vector<wxBitmapButton*>>*, const bool, const std::vector<wxBitmapButton*> *excep = nullptr);
+    bool SearchForActiveBButtons(const std::vector<wxBitmapButton*>*, const wxBitmapButton*);
     void IdentifyActiveCells(std::vector<std::vector<wxBitmapButton*>>*, wxBitmapButton*, DATA_POS_MATRIX*, int);
     void CheckGameStatus(const DATA_POS_MATRIX*, wxBitmapButton*);
     std::pair<int, int>DiagonalPushFromLeftToRight(int, int);
     std::pair<int, int>DiagonalPushFromRightToLeft(int, int, int);
     void SetCellColor(std::vector<wxBitmapButton*>*);
+    int GetTheLengthOfTheSequence(int);
+    bool IsTheGameOver();
+    void SetGameStatus(bool);
+    void EventsAfterTheVictory(std::vector<wxBitmapButton*>*);
 };
 
 #endif /* TriLogic_hpp */
