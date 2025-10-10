@@ -631,4 +631,14 @@ void TriLogic::EventsAfterTheVictory(std::vector<wxBitmapButton*> *vec_b){
         vec_b->clear();
         SetGameStatus(true);
     }
+    
+    wxMessageDialog message(this->frameMFd, "You have won!\n\n Start a new game ?", "TriLogic", wxYES_NO | wxICON_QUESTION);
+    int id = message.ShowModal();
+
+    if (id == wxID_YES) {
+        wxCommandEvent ev_cell(wxEVT_BUTTON, NULL);
+        ReturnGameToStart(ev_cell);
+    }
+    else if (id == wxID_NO) {
+    }
 }
