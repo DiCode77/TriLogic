@@ -495,6 +495,7 @@ void TriLogic::CheckGameStatus(const DATA_POS_MATRIX *st, wxBitmapButton *button
     for (int i = 0; i < m_vec[m_pir.first].size(); i++){ //
         if (m_vec[m_pir.first][i] != mp_last){
             sum = 0;
+            v_button.clear();
         }
         else{
             sum++;
@@ -513,6 +514,7 @@ void TriLogic::CheckGameStatus(const DATA_POS_MATRIX *st, wxBitmapButton *button
     for (int i = 0; i < m_vec.size(); i++){ //
         if (m_vec[i][m_pir.second] != mp_last){
             sum = 0;
+            v_button.clear();
         }
         else{
             sum++;
@@ -532,6 +534,7 @@ void TriLogic::CheckGameStatus(const DATA_POS_MATRIX *st, wxBitmapButton *button
     for (int x = l_toR.first, y = l_toR.second; x < m_vec.size() && y < m_vec.size(); x++, y++){
         if (m_vec[x][y] != mp_last){
             sum = 0;
+            v_button.clear();
         }
         else{
             sum++;
@@ -551,6 +554,7 @@ void TriLogic::CheckGameStatus(const DATA_POS_MATRIX *st, wxBitmapButton *button
     for (int x = r_toL.first, y = r_toL.second; x < m_vec.size() && y < m_vec.size(); x++, y--){
         if (m_vec[x][y] != mp_last){
             sum = 0;
+            v_button.clear();
         }
         else{
             sum++;
