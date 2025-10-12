@@ -120,6 +120,9 @@ void TriLogic::ShowMatchField(wxCommandEvent &ev){
         InitBitmapButtonGrid(&this->vec_grid, 0, static_cast<int>(this->grid->GetDataMap().size()));
         SetSelectIdButton(ev.GetId());
     }
+    else{
+        ShowDialogMessageWindow(this->frameMFd, "The game has already started!", wxEmptyString, wxOK_DEFAULT);
+    }
 }
 
 // Several actions take place here.
@@ -632,13 +635,22 @@ void TriLogic::EventsAfterTheVictory(std::vector<wxBitmapButton*> *vec_b){
         SetGameStatus(true);
     }
     
-    wxMessageDialog message(this->frameMFd, "You have won!\n\n Start a new game ?", "TriLogic", wxYES_NO | wxICON_QUESTION);
-    int id = message.ShowModal();
+    wxCommandEvent ev_cell(wxEVT_BUTTON, NULL);
+    int id = ShowDialogMessageWindow(this->frameMFd, "You have won!\n\n Start a new game ?", "TriLogic", wxYES_NO);
+    switch (id) {
+        case wxID_YES:
+            ReturnGameToStart(ev_cell);
+            break;
+        case wxID_NO:
+            break;
+        default:
+            break;
+    }
+}
 
-    if (id == wxID_YES) {
-        wxCommandEvent ev_cell(wxEVT_BUTTON, NULL);
-        ReturnGameToStart(ev_cell);
-    }
-    else if (id == wxID_NO) {
-    }
+// Method for displaying a dialog box.
+int TriLogic::ShowDialogMessageWindow(wxFrame *p_frame, wxString message_1, wxString message_2, int arg){
+    if (p_frame == nullptr)
+        return -1;
+    return wxMessageDialog(p_frame, message_1, message_2, arg).ShowModal();
 }

@@ -105,6 +105,7 @@ private:
     bool IsTheGameOver();
     void SetGameStatus(bool);
     void EventsAfterTheVictory(std::vector<wxBitmapButton*>*);
+    int ShowDialogMessageWindow(wxFrame*, wxString, wxString, int);
 };
 
 #endif /* TriLogic_hpp */
