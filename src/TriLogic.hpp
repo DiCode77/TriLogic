@@ -21,7 +21,7 @@
 #include "GridDynamic.hpp"
 #include "ColourPropertyGrid.hpp"
 
-constexpr const char *PROG_VERSION = "0.0.2";
+constexpr const char *PROG_VERSION = "0.0.3";
 
 enum ID_START_BUTTON{
     NONE,
