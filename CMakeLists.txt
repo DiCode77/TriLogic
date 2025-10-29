@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 4.0.2)
 
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake CACHE STRING "Vcpkg toolchain file")
-set(MINIMUM_APP_VERSION "26.0")
+set(MINIMUM_APP_VERSION "14.6")
 set(CMAKE_OSX_DEPLOYMENT_TARGET "${MINIMUM_APP_VERSION}" CACHE STRING "Minimum OS X deployment version")
 
 project(TriLogic)

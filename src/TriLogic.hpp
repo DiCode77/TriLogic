@@ -20,8 +20,12 @@
 
 #include "GridDynamic.hpp"
 #include "ColourPropertyGrid.hpp"
+#include "SaveConfig.hpp"
+#include "OtrClasses.hpp"
 
 constexpr const char *PROG_VERSION = "0.0.3";
+constexpr const int MIN_SIZE_GRID  = 3;
+constexpr const int MAX_SIZE_GRID  = 10;
 
 enum ID_START_BUTTON{
     NONE,
@@ -31,10 +35,10 @@ enum ID_START_BUTTON{
 };
 
 typedef struct SET_SETTINGS{
-    wxColour main_window_colors = {0, 0, 0};
-    wxColour game_window_colors = {0, 0, 0};
-    wxColour game_grid_colors   = {0, 0, 0};
-    int      mesh_seze_grid     = 3;
+    wxColour main_window_colors = wxFrame().GetBackgroundColour();
+    wxColour game_window_colors = wxFrame().GetBackgroundColour();
+    wxColour game_grid_colors   = wxColour(OTR::Rand(255), OTR::Rand(255), OTR::Rand(255));
+    int      mesh_seze_grid     = MIN_SIZE_GRID;
 } SET_SETTINGS;
 
 typedef struct DATA_POS_MATRIX{
@@ -52,6 +56,7 @@ class TriLogic : public wxFrame{
     SET_SETTINGS p_settings;
     DATA_POS_MATRIX st_pm_grid;
     bool gameStatus = false;
+    Config config;
     
 public:
     TriLogic(const wxString title, const wxPoint point, const wxSize size);
@@ -106,6 +111,7 @@ private:
     void SetGameStatus(bool);
     void EventsAfterTheVictory(std::vector<wxBitmapButton*>*);
     int ShowDialogMessageWindow(wxFrame*, wxString, wxString, int);
+    void TransferConfigurationSettings(wxString, wxString);
 };
 
 #endif /* TriLogic_hpp */

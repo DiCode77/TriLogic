@@ -9,6 +9,7 @@
 
 TriLogic::TriLogic(const wxString title, const wxPoint point, const wxSize size) : wxFrame(nullptr, wxID_ANY, title, point, size, wxCLOSE_BOX | wxMINIMIZE_BOX), grid(nullptr){
     this->Centre();
+    this->TransferConfigurationSettings("TriLogic", "DiCode77");
     this->panel = new wxPanel(this, wxID_ANY);
     wxImage::AddHandler(new wxPNGHandler);
     
@@ -334,20 +335,32 @@ void TriLogic::SetSettingsForGames(wxCommandEvent&){
         wxPGProperty *title_name = pg->Append(new wxPropertyCategory(this->GetTitle()));
         
         wxPGProperty *main_w = title_name->AppendChild(new wxPropertyCategory("Main Window"));
-        main_w->AppendChild(new MyColourProperty(this, "Color", "Main_color_window"));
+        main_w->AppendChild(new MyColourProperty(this, "Color", "Main_color_window", this->GetBackgroundColour()));
         
         wxArrayString arr_lab;
         wxArrayInt arr_val;
         
-        for (int i = 3; i <= 10; i++){
+        for (int i = MIN_SIZE_GRID; i <= MAX_SIZE_GRID; i++){
             arr_lab.Add(std::to_string(i) + "x" + std::to_string(i));
             arr_val.Add(i);
         }
         
         wxPGProperty *game_w = title_name->AppendChild(new wxPropertyCategory("Game Window"));
-        game_w->AppendChild(new wxEnumProperty("Mesh size", "Mesh_size_grid", arr_lab, arr_val, 3));
-        game_w->AppendChild(new MyColourProperty(this, "Color Grid", "Game_grid_color"));
-        game_w->AppendChild(new MyColourProperty(this, "Color Window", "Game_color_window"));
+        game_w->AppendChild(new wxEnumProperty("Mesh size",
+                                               "Mesh_size_grid",
+                                               arr_lab,
+                                               arr_val,
+                                               GetPSettings().mesh_seze_grid));
+
+        game_w->AppendChild(new MyColourProperty(this,
+                                                 "Color Grid",
+                                                 "Game_grid_color",
+                                                 GetPSettings().game_grid_colors));
+        
+        game_w->AppendChild(new MyColourProperty(this,
+                                                 "Color Window",
+                                                 "Game_color_window",
+                                                 GetPSettings().game_window_colors));
         
         pg->CollapseAll();
         title_name->SetExpanded(true);
@@ -418,8 +431,9 @@ void TriLogic::SetSettingsProperty(wxPropertyGridEvent &event){
     }
     else if (event.GetPropertyName() == "Mesh_size_grid"){
         long val = event.GetValue().GetLong();
-        if (val >= 3){
+        if (val >= MIN_SIZE_GRID){
             GetPSettings().mesh_seze_grid = static_cast<int>(val);
+            this->config.SetParameter(CONFIG_GAME_WINDOW_SIZE_GRID, GetPSettings().mesh_seze_grid);
             
             if (this->grid){
                 this->grid->SetGridLines(GetPSettings().mesh_seze_grid);
@@ -653,4 +667,13 @@ int TriLogic::ShowDialogMessageWindow(wxFrame *p_frame, wxString message_1, wxSt
     if (p_frame == nullptr)
         return -1;
     return wxMessageDialog(p_frame, message_1, message_2, arg).ShowModal();
+}
+
+void TriLogic::TransferConfigurationSettings(wxString appN, wxString appVe){
+    if (!this->config.GetIsStatus())
+        this->config.InitConfig(appN, appVe);
+    
+    if (this->config.CheckKey(CONFIG_GAME_WINDOW_SIZE_GRID)){
+        this->GetPSettings().mesh_seze_grid = static_cast<int>(this->config.GetLongParameter(CONFIG_GAME_WINDOW_SIZE_GRID));
+    }
 }

@@ -8,17 +8,15 @@
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>TriLogic</string>
-    <key>CFBundleGetInfoString</key>
-	<string>TriLogic 2025 DiCode77</string>
-    <key>CFBundleIconFile</key>
+	<key>CFBundleIconFile</key>
 	<string>TriLogic.icns</string>
-    <key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.dicode77.trilogic</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLongVersionString</key>
-	<string></string>
-    <key>CFBundleName</key>
+	<string>TriLogic Release Version</string>
+	<key>CFBundleName</key>
 	<string>TriLogic</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
@@ -38,17 +36,19 @@
 	<string>macosx</string>
 	<key>DTPlatformVersion</key>
 	<string>26.0</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.0.3</string>
+	<key>CFBundleVersion</key>
+	<string>3</string>
 	<key>DTSDKBuild</key>
 	<string>25A5344a</string>
 	<key>DTSDKName</key>
 	<string>macosx26.0</string>
 	<key>DTXcode</key>
 	<string>2600</string>
-	<key>DTXcodeBuild</key>
-	<string>17A5305k</string>
 	<key>LSMinimumSystemVersion</key>
-	<string>26.0</string>
-    <key>NSHighResolutionCapable</key>
+	<string>14.6</string>
+	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSPrincipalClass</key>
 	<string>wxNSApplication</string>

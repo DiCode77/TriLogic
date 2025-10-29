@@ -28,14 +28,14 @@ void Config::SetParameter(wxString key, wxString val){
 }
 
 wxString Config::GetStringParameter(wxString key){
-    if (this->isStatus && this->_config.HasEntry(key)){
+    if (this->CheckKey(key)){
         return this->_config.Read(key, wxEmptyString);
     }
     return wxEmptyString;
 }
 
 long Config::GetLongParameter(wxString key){
-    if (this->isStatus && this->_config.HasEntry(key)){
+    if (this->CheckKey(key)){
         return this->_config.ReadLong(key, -1);
     }
     return -1;
@@ -43,6 +43,13 @@ long Config::GetLongParameter(wxString key){
 
 wxFileConfig *Config::GetParameter(){
     return &this->_config;
+}
+bool Config::CheckKey(wxString key){
+    return this->isStatus && this->_config.HasEntry(key);
+}
+
+bool Config::GetIsStatus(){
+    return this->isStatus;
 }
 
 const wxString Config::GetFullPathForDir(){
@@ -62,7 +69,7 @@ void Config::CreateConfFiles(wxString path, wxString appName, wxString appVendor
         this->_config.SetAppName(appName);
         this->_config.SetVendorName(appVendor);
         
-        this->_config.Write(wxString("APP_VERSION"), PROG_VERSION);
+        this->_config.Write(CONFIG_INFO_VERSION, PROG_VERSION);
         this->_config.Flush();
         
         this->isStatus = CheckIsFile(wxString(path).append("/").append(SETTINGS_FILE)) ? true : false;
