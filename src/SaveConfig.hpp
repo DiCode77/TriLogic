@@ -18,11 +18,16 @@ constexpr const char *SETTINGS_FILE = "Settings.conf";
 class Config{
     wxFileConfig    _config;
     wxFileName      _file;
-    bool            isStatus = true;
+    bool            isStatus = false;
 public:
     
     Config();
     void InitConfig(wxString, wxString);
+    void SetParameter(wxString, long);
+    void SetParameter(wxString, wxString);
+    wxString GetStringParameter(wxString);
+    long GetLongParameter(wxString);
+    wxFileConfig *GetParameter();
     
 private:
     const wxString GetFullPathForDir();
