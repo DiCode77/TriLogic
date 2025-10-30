@@ -37,7 +37,7 @@ enum ID_START_BUTTON{
 typedef struct SET_SETTINGS{
     wxColour main_window_colors = wxFrame().GetBackgroundColour();
     wxColour game_window_colors = wxFrame().GetBackgroundColour();
-    wxColour game_grid_colors   = wxColour(OTR::Rand(255), OTR::Rand(255), OTR::Rand(255));
+    wxColour game_grid_colors   = wxColour(OTR::Rand(0, 255), OTR::Rand(0, 255), OTR::Rand(0, 255));
     int      mesh_seze_grid     = MIN_SIZE_GRID;
 } SET_SETTINGS;
 

@@ -9,16 +9,17 @@
 #define OtrClasses_hpp
 
 #include <cstdlib>
-#include <ctime>
+#include <random>
 
 namespace OTR {
 class Rand{
-    int max = 0;
+    std::random_device rd;
+    std::mt19937 rand_g;
+    std::uniform_int_distribution<int> u_dist;
 public:
-    Rand(int val) : max(val){};
+    Rand(int _min, int _max) : u_dist(_min, _max), rand_g(this->rd()){};
     operator int(){
-        std::srand(static_cast<int>(std::clock()));
-        return std::rand() % this->max;
+        return this->u_dist(this->rand_g);
     }
 };
 }
