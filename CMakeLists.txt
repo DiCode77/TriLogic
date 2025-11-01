@@ -15,6 +15,8 @@ file(GLOB IMAGE_FILES CONFIGURE_DEPENDS
 include_directories(${SRC}) 
 
 find_package(wxWidgets CONFIG REQUIRED)
+find_package(cpr CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 file(GLOB SRC_FILES "${SRC}/*.cpp" "${SRC}/*.h" "${SRC}/*.hpp")
 add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${SRC_FILES}) 
@@ -31,6 +33,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 20
                                                  
 set_source_files_properties(${IMAGE_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources") 
 
-target_link_libraries(${PROJECT_NAME} PRIVATE wx::core wx::base wx::propgrid)
+target_link_libraries(${PROJECT_NAME} PRIVATE wx::core wx::base wx::propgrid cpr::cpr nlohmann_json::nlohmann_json)
 
 target_sources(${PROJECT_NAME} PRIVATE ${IMAGE_FILES})
