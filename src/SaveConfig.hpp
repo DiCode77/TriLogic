@@ -16,6 +16,9 @@
 constexpr const char *SETTINGS_FILE                 = "Settings.conf";
 constexpr const char *CONFIG_INFO_VERSION           = "INFO/app_version";
 constexpr const char *CONFIG_GAME_WINDOW_SIZE_GRID  = "GAME_WINDOW/size_grid";
+constexpr const char *CONFIG_API_SERVER_HOST        = "API_SERVER/host";
+constexpr const char *CONFIG_API_SERVER_PORT        = "API_SERVER/port";
+constexpr const char *CONFIG_API_SERVER_HTTPS       = "API_SERVER/https";
 
 class Config{
     wxFileConfig    _config;
